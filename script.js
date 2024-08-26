@@ -1,6 +1,12 @@
 let draggedTile = null;
 let placeholderTile = null;
 
+// Define the four corner colors
+const color1 = "#473a3a"; // Top-left (red)
+const color2 = "#00c7e8"; // Top-right (green)
+const color3 = "#d9f5ff"; // Bottom-left (blue)
+const color4 = "#fe7777"; // Bottom-right (yellow)
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -116,17 +122,20 @@ function generateGradientGrid(c1, c2, c3, c4, width, height) {
     return grid;
 }
 
-// Define the four corner colors
-const color1 = "#ff0000"; // Top-left (red)
-const color2 = "#00ff00"; // Top-right (green)
-const color3 = "#0000ff"; // Bottom-left (blue)
-const color4 = "#ffff00"; // Bottom-right (yellow)
-
 function generateGrid() {
     const rows = document.getElementById('rows').value;
     const columns = document.getElementById('columns').value;
 
-    colorGrid = generateGradientGrid(color1, color2, color3, color4, rows, columns);
+    let colorGrid = generateGradientGrid(color1, color2, color3, color4, columns, rows);
+
+    var fixedTileNumList = [];
+    fixedTileNumList.push(0);
+    fixedTileNumList.push(rows-1);
+    fixedTileNumList.push(rows*(columns-1));
+    fixedTileNumList.push((rows*columns)-1);
+
+    var randomTileList = [];
+    var fixedTileList = [];
 
     // Clear existing grid
     grid.innerHTML = '';
@@ -135,19 +144,42 @@ function generateGrid() {
     grid.style.gridTemplateColumns = `repeat(${columns}, 100px)`;
     grid.style.gridTemplateRows = `repeat(${rows}, 100px)`;
 
+    let counter = 0;
+
+    let randomize = false;
+
     // Generate new grid of tiles with random colors
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < columns; j++) {
             const tile = document.createElement('div');
             tile.classList.add('tile');
             tile.style.backgroundColor = colorGrid[i][j];
-            // tile.style.position = "fixed";
             tile.draggable = false;
-            grid.appendChild(tile);
+            tile.setAttribute('tile-num', counter)
+            if(randomize) {
+                if(fixedTileNumList.includes(counter)) {
+                    fixedTileList.push(tile);
+                } else {
+                    randomTileList.push(tile);
+                }
+            } else {
+                grid.appendChild(tile);
+            }
+            counter++;
         }
     }
 
-    addDragAndDropListeners();
+    if(randomize) {
+        for (let i = 0; i < counter; i++) {
+            if (fixedTileNumList.includes(i)) {
+                grid.appendChild(fixedTileList[fixedTileNumList.indexOf(i)]);
+            } else {
+                let randomIndex = Math.floor(Math.random() * randomTileList.length);
+                grid.appendChild(randomTileList[randomIndex]);
+                randomTileList.splice(randomIndex, 1);
+            }
+        }
+    }
 }
 
 function getRandomColor() {
