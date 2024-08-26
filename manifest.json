@@ -1,0 +1,17 @@
+{
+    "lang": "en-us",
+    "name": "Gradient Swap Game",
+    "short_name": "Gradient Swap",
+    "description": "An infinitely replayable, randomly generated clone of the Colours game from Puzzledom",
+    "start_url": "/",
+    "background_color": "#2f3d58",
+    "theme_color": "#2f3d58",
+    "orientation": "any",
+    "display": "standalone",
+    "icons": [
+        {
+            "src": "/icon.png",
+            "sizes": "512x512"
+        }
+    ]
+}
