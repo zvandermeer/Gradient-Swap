@@ -306,6 +306,85 @@ function generateGradientGrid(c1, c2, c3, c4, width, height) {
     return grid;
 }
 
+function chooseFixedTiles(rows, columns) {
+    var fixedTileNumList = [];
+    fixedTileNumList.push(0);
+    fixedTileNumList.push(columns-1);
+    fixedTileNumList.push(columns*(rows-1));
+    fixedTileNumList.push((rows*columns)-1);
+
+    var fixedTilePatterns =  [
+        // Wrap around pattern
+        (fixedTileNumList, rows, columns) => {
+            if (rows > 3 && columns > 3) {
+                // Top and bottom rows
+                for(let i = 1; i < (columns-1); i++) {
+                    fixedTileNumList.push(i);
+                    fixedTileNumList.push((rows*(columns-1)+i));
+                }
+                // Left and right columns
+                for (let i = 1; i < (rows-1); i++) {
+                    fixedTileNumList.push(i*columns);
+                    fixedTileNumList.push((((i+1)*columns))-1);
+                }
+                return true;
+            } else {
+                return false;
+            }
+        },
+        // Every other square
+        (fixedTileNumList, rows, columns) => {
+            if ((columns*rows) & 1) {
+                for(let i = 2; i < ((columns*rows) - 1); i+=2) {
+                    if(!fixedTileNumList.includes(i)) {
+                        fixedTileNumList.push(i);
+                    }
+                }
+                return true;
+            } else {
+                return false;
+            }
+        },
+        // Center
+        (fixedTileNumList, rows, columns) => {
+            let row = rows/2
+            let column = columns/2
+            if ((columns*rows) & 1) {
+                fixedTileNumList.push((columns*Math.ceil(row))-Math.ceil(column));
+            } else if(!(columns & 1) && !(rows & 1)) {
+                for(let i = 0; i < 2; i++) {
+                    fixedTileNumList.push((columns*row)-(column+i));
+                }
+                for(let i = 0; i < 2; i++) {
+                    fixedTileNumList.push((columns*(row+1))-(column+i));
+                }
+            } else {
+                if(!(columns & 1)) {
+                    for(let i = 0; i < 2; i++) {
+                        fixedTileNumList.push((columns*(Math.ceil(row)))-(column+i));
+                    }
+                } else {
+                    for(let i = 0; i < 2; i++) {
+                        fixedTileNumList.push((columns*(row+i))-Math.ceil(column));
+                    }
+                }
+            }
+            return true;
+        },
+        // Just corners
+        () => {return true;}
+    ]
+
+    let pattern = null;
+
+    do {
+        pattern = Math.floor(Math.random() * fixedTilePatterns.length)
+    } while (!fixedTilePatterns[pattern](fixedTileNumList, rows, columns));
+
+
+    return fixedTileNumList.sort(function(a, b){return a - b});
+}
+
 // Generate a new tile grid
 function generateGrid() {
     const rows = document.getElementById('rows').value;
@@ -315,11 +394,7 @@ function generateGrid() {
     let colorGrid = generateGradientGrid(color1, color2, color3, color4, columns, rows);
 
     // Create fixed tile pattern, setting corners as fixed TODO: Add more fixed tile patterns
-    var fixedTileNumList = [];
-    fixedTileNumList.push(0);
-    fixedTileNumList.push(columns-1);
-    fixedTileNumList.push(columns*(rows-1));
-    fixedTileNumList.push((rows*columns)-1);
+    let fixedTileNumList = chooseFixedTiles(rows, columns);
 
     // Initialize lists of random and fixed tiles
     var randomTileList = [];
