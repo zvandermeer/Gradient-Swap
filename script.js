@@ -1,6 +1,8 @@
 let draggedTile = null;
 let placeholderTile = null;
+
 let randomize = true;
+let puzzleSolved = false;
 
 let color1 = null;
 let color2 = null;
@@ -12,6 +14,23 @@ let cursorY = null;
 
 document.addEventListener('touchmove', onCursorMove);
 document.addEventListener('mousemove', onCursorMove);
+
+const grid = document.getElementById('grid');
+
+const generateButton = document.getElementById('generate');
+generateButton.addEventListener('click', () => {
+    randomize = true;
+    puzzleSolved = false;
+    randomizeCornerColors();
+    generateGrid();
+});
+
+const solutionButton = document.getElementById('solution');
+solutionButton.addEventListener('click', () => {
+    randomize = false;
+    puzzleSolved = true;
+    generateGrid();
+});
 
 function randomizeCornerColors() {
     // Define the four corner colors
@@ -27,7 +46,7 @@ function sleep(ms) {
 
 function onCursorMove(event) {
     cursorX = event.pageX;
-    cursorY = event.pageY
+    cursorY = event.pageY;
 }
 
 function onItemDrag() {
@@ -40,7 +59,7 @@ function moveAt(pageX, pageY) {
 }
 
 function startDrag(e, touch) {
-    if (e.target.classList.contains('tile') && !e.target.classList.contains('placeholder')) {
+    if (e.target.classList.contains('tile') && !e.target.classList.contains('placeholder') && !e.target.classList.contains('fixed') && !puzzleSolved) {
         draggedTile = e.target;
         draggedTile.classList.add('dragging');
         moveAt(e.pageX, e.pageY);
@@ -61,10 +80,9 @@ function startDrag(e, touch) {
 document.body.addEventListener('touchstart', (e) => {startDrag(e, true)});
 document.body.addEventListener('mousedown', (e) => {startDrag(e, false)});
 
-async function stopDrag(e, touch) {
+async function stopDrag(touch) {
     if (draggedTile) {
         let element = document.elementsFromPoint(cursorX, cursorY)[0];
-        console.log(element);
         if(element.classList.contains('tile') && !element.classList.contains('placeholder')) {
             newTile = element;
 
@@ -94,6 +112,26 @@ async function stopDrag(e, touch) {
             newTile.style.left = null;
             newTile.style.top = null;
             newTile.style.transform = null;
+
+
+            var gridChildren = grid.children;
+            var totalSquares = gridChildren.length - 1;
+
+            var placeholderOffset = 0;
+
+            winCheck: for(var i = 0; i < gridChildren.length; i++) {
+                if(!gridChildren[i].classList.contains('placeholder')) {
+                    if(parseInt(gridChildren[i].getAttribute('tile-num')) != i - placeholderOffset) {
+                        break winCheck;
+                    }
+                    if(i == totalSquares) {
+                        puzzleSolved = true;
+                    }
+                } else {
+                    placeholderOffset = 1;
+                }
+            }
+
         } else {
             oldTilePos = placeholderTile.getBoundingClientRect();
 
@@ -123,23 +161,8 @@ async function stopDrag(e, touch) {
     }
 }
 
-document.body.addEventListener('touchend', (e) => {stopDrag(e, true)});
-document.body.addEventListener('mouseup', (e) => {stopDrag(e, false)});
-
-const grid = document.getElementById('grid');
-
-const generateButton = document.getElementById('generate');
-generateButton.addEventListener('click', () => {
-    randomize = true;
-    randomizeCornerColors();
-    generateGrid();
-});
-
-const solutionButton = document.getElementById('solution');
-solutionButton.addEventListener('click', () => {
-    randomize = false;
-    generateGrid();
-});
+document.body.addEventListener('touchend', () => {stopDrag(true)});
+document.body.addEventListener('mouseup', () => {stopDrag(false)});
 
 // Function to interpolate between two colors
 function interpolateColor(color1, color2, factor) {
