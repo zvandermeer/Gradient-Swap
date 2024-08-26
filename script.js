@@ -63,8 +63,15 @@ function moveAt(pageX, pageY) {
 }
 
 // Adds listeners to start dragging when tile is selected
-document.body.addEventListener('touchstart', (e) => {startDrag(e, true)});
-document.body.addEventListener('mousedown', (e) => {startDrag(e, false)});
+document.body.addEventListener('touchstart', (e) => {
+    if (placeholderTile) {
+        cancelDrag(true);
+    }
+    if(e.touches.length === 1){
+        startDrag(e, true);
+    }
+});
+document.body.addEventListener('mousedown', (e) => {startDrag(e, false);});
 
 // Starts dragging the selected tile
 function startDrag(e, touch) {
@@ -103,8 +110,8 @@ async function stopDrag(touch) {
             newTile = element;
 
             // Gets coordinates of tiles to swap
-            oldTilePos = placeholderTile.getBoundingClientRect();
-            newTilePos = newTile.getBoundingClientRect();
+            let oldTilePos = placeholderTile.getBoundingClientRect();
+            let newTilePos = newTile.getBoundingClientRect();
 
             // Animates dragged tile into new position
             draggedTile.classList.add('swapping');
@@ -145,7 +152,7 @@ async function stopDrag(touch) {
                     if(parseInt(gridChildren[i].getAttribute('tile-num')) != i - placeholderOffset) {
                         break winCheck;
                     }
-                    if(i == totalSquares) {
+                    if(i === totalSquares) {
                         puzzleSolved = true;
                     }
                 } else {
@@ -157,7 +164,7 @@ async function stopDrag(touch) {
 
         } else {
             // If the dragged tile is not released on top of another tile, snap it back to the home position
-            oldTilePos = placeholderTile.getBoundingClientRect();
+            let oldTilePos = placeholderTile.getBoundingClientRect();
 
             draggedTile.classList.add('swapping');
             draggedTile.style.transform = "translate(" + (oldTilePos.left - parseInt(draggedTile.style.left.slice(0, -2))) + "px," + (oldTilePos.top - parseInt(draggedTile.style.top.slice(0, -2))) + "px)";
@@ -186,6 +193,36 @@ async function stopDrag(touch) {
         draggedTile.style.transform = null;
         draggedTile = null;
     }
+}
+
+// If the tile drag needs to be cancelled for whatever reason
+async function cancelDrag(touch) {
+    let oldTilePos = placeholderTile.getBoundingClientRect();
+
+    draggedTile.classList.add('swapping');
+    draggedTile.style.transform = "translate(" + (oldTilePos.left - parseInt(draggedTile.style.left.slice(0, -2))) + "px," + (oldTilePos.top - parseInt(draggedTile.style.top.slice(0, -2))) + "px)";
+
+    await sleep(180);
+
+    draggedTile.classList.remove('swapping');
+
+    placeholderTile.remove();
+    placeholderTile = null;
+
+    // Removes listener moving tile with cursor
+    if(touch) {
+        document.removeEventListener('touchmove', onItemDrag);
+    } else {
+        document.removeEventListener('mousemove', onItemDrag);
+    }
+
+    // Finalizes the dragged tile back to a stationary position
+    draggedTile.classList.remove('dragging');
+
+    draggedTile.style.left = null;
+    draggedTile.style.top = null;
+    draggedTile.style.transform = null;
+    draggedTile = null;
 }
 
 // Selects random colors for the corners which will be used to generate the gradient
