@@ -239,8 +239,8 @@ function generateGrid() {
     // Create fixed tile pattern, setting corners as fixed TODO: Add more fixed tile patterns
     var fixedTileNumList = [];
     fixedTileNumList.push(0);
-    fixedTileNumList.push(rows-1);
-    fixedTileNumList.push(rows*(columns-1));
+    fixedTileNumList.push(columns-1);
+    fixedTileNumList.push(columns*(rows-1));
     fixedTileNumList.push((rows*columns)-1);
 
     // Initialize lists of random and fixed tiles
