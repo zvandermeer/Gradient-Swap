@@ -2,10 +2,10 @@ let draggedTile = null;
 let placeholderTile = null;
 
 // Define the four corner colors
-const color1 = "#473a3a"; // Top-left (red)
-const color2 = "#00c7e8"; // Top-right (green)
-const color3 = "#d9f5ff"; // Bottom-left (blue)
-const color4 = "#fe7777"; // Bottom-right (yellow)
+const color1 = getRandomColor(); // Top-left (red)
+const color2 = getRandomColor(); // Top-right (green)
+const color3 = getRandomColor(); // Bottom-left (blue)
+const color4 = getRandomColor(); // Bottom-right (yellow)
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
