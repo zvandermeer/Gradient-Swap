@@ -317,26 +317,129 @@ function chooseFixedTiles(rows, columns) {
     fixedTileNumList.push(columns*(rows-1));
     fixedTileNumList.push((rows*columns)-1);
 
-    var fixedTilePatterns =  [
-        // Wrap around pattern
-        (fixedTileNumList, rows, columns) => {
-            if (rows > 3 && columns > 3) {
-                // Top and bottom rows
-                for(let i = 1; i < (columns-1); i++) {
-                    fixedTileNumList.push(i);
-                    fixedTileNumList.push((rows*(columns-1)+i));
-                }
-                // Left and right columns
-                for (let i = 1; i < (rows-1); i++) {
-                    fixedTileNumList.push(i*columns);
-                    fixedTileNumList.push((((i+1)*columns))-1);
-                }
-                return true;
-            } else {
-                return false;
+    function genFullVertical(fixedTileNumList, rows, columns) {
+        let column = (columns/2) - 1;
+        if (columns & 1) {
+            for(let i = 0; i < rows; i++) {
+                fixedTileNumList.push((columns*i)+Math.ceil(column));
             }
+        } else {
+            for(let i = 0; i < rows; i++) {
+                for(let j = 0; j < 2; j++) {
+                    fixedTileNumList.push((columns*i)+(column+j));
+                }
+            }
+        }
+    }
+
+    function genFullHorizontal(fixedTileNumList, rows, columns) {
+        let row = (rows/2) - 1;
+        if (rows & 1) {
+            for(let i = 0; i < columns; i++) {
+                fixedTileNumList.push((columns*Math.ceil(row))+i);
+            }
+        } else {
+            for(let i = 0; i < 2; i++) {
+                for(let j = 0; j < columns; j++) {
+                    fixedTileNumList.push((columns*(row+i))+j);
+                }
+            }
+        }
+    }
+
+    function genSides(fixedTileNumList, rows, columns, sides) {
+        const sideFunctions = {
+            0: () => {
+                for (let i = 1; i < columns - 1; i++) {
+                    fixedTileNumList.push(i); // Top
+                }
+            },
+            1: () => {
+                for (let i = 1; i < rows - 1; i++) {
+                    fixedTileNumList.push(i * columns); // Left
+                }
+            },
+            2: () => {
+                for (let i = 1; i < columns - 1; i++) {
+                    fixedTileNumList.push(rows * (columns - 1) + i); // Bottom
+                }
+            },
+            3: () => {
+                for (let i = 1; i < rows - 1; i++) {
+                    fixedTileNumList.push((i + 1) * columns - 1); // Right
+                }
+            }
+        };
+    
+        sides.forEach(side => sideFunctions[side]());
+    }
+    
+    function getCenterTiles(rows, columns) {
+        var centerTiles = [];
+
+        let row = rows/2
+        let column = columns/2
+        if ((columns*rows) & 1) {
+            centerTiles.push((columns*Math.ceil(row))-Math.ceil(column));
+        } else if(!(columns & 1) && !(rows & 1)) {
+            for(let i = 0; i < 2; i++) {
+                for(let j = 0; j < 2; j++) {
+                    centerTiles.push((columns*(row+i))-(column+j));
+                }
+            }
+        } else {
+            if(!(columns & 1)) {
+                for(let i = 0; i < 2; i++) {
+                    centerTiles.push((columns*(Math.ceil(row)))-(column+i));
+                }
+            } else {
+                for(let i = 0; i < 2; i++) {
+                    centerTiles.push((columns*(row+i))-Math.ceil(column));
+                }
+            }
+        }
+
+        return centerTiles;
+    }
+
+    var fixedTilePatterns =  [
+        // Random full sides [0]
+        (fixedTileNumList, rows, columns, sidePattern) => {
+            let totalPatterns = 15
+            if (rows < 4 && columns < 4) {
+                if (sidePattern == 14) {
+                    return false;
+                }
+                totalPatterns = 14;
+            }
+
+            if(!sidePattern) {
+                sidePattern = Math.floor(Math.random() * totalPatterns);
+            }
+            
+            const sidePatterns = [
+                [0],
+                [1],
+                [2],
+                [3],   
+                [0, 1],
+                [0, 2],
+                [0, 3],
+                [1, 2],
+                [1, 3],
+                [2, 3],
+                [0, 1, 2],
+                [0, 1, 3],
+                [0, 2, 3],
+                [1, 2, 3],
+                [0, 1, 2, 3]
+            ];
+
+            genSides(fixedTileNumList, rows, columns, sidePatterns[sidePattern]);
+
+            return true;
         },
-        // Every other square
+        // Every other square [1]
         (fixedTileNumList, rows, columns) => {
             if ((columns*rows) & 1) {
                 for(let i = 2; i < ((columns*rows) - 1); i+=2) {
@@ -349,33 +452,41 @@ function chooseFixedTiles(rows, columns) {
                 return false;
             }
         },
-        // Center
+        // Center [2]
         (fixedTileNumList, rows, columns) => {
-            let row = rows/2
-            let column = columns/2
-            if ((columns*rows) & 1) {
-                fixedTileNumList.push((columns*Math.ceil(row))-Math.ceil(column));
-            } else if(!(columns & 1) && !(rows & 1)) {
-                for(let i = 0; i < 2; i++) {
-                    fixedTileNumList.push((columns*row)-(column+i));
-                }
-                for(let i = 0; i < 2; i++) {
-                    fixedTileNumList.push((columns*(row+1))-(column+i));
-                }
-            } else {
-                if(!(columns & 1)) {
-                    for(let i = 0; i < 2; i++) {
-                        fixedTileNumList.push((columns*(Math.ceil(row)))-(column+i));
-                    }
-                } else {
-                    for(let i = 0; i < 2; i++) {
-                        fixedTileNumList.push((columns*(row+i))-Math.ceil(column));
-                    }
-                }
+            let centerTiles = getCenterTiles(rows, columns);
+            for(let i = 0; i < centerTiles.length; i++) {
+                fixedTileNumList.push(centerTiles[i]);
             }
             return true;
         },
-        // Just corners
+        // Vertical line [3]
+        (fixedTileNumList, rows, columns) => {
+            genFullVertical(fixedTileNumList, rows, columns);
+            return true;
+        },
+        // Horizontal line [4]
+        (fixedTileNumList, rows, columns) => {
+            genFullHorizontal(fixedTileNumList, rows, columns);
+            return true;
+        },
+        // Cross [5]
+        (fixedTileNumList, rows, columns) => {
+            if (rows < 4 && columns < 4) {
+                genFullVertical(fixedTileNumList, rows, columns);
+
+                let centerTiles = getCenterTiles(rows, columns);
+                for(let i = 0; i < centerTiles.length; i++) {
+                    fixedTileNumList.splice(fixedTileNumList.indexOf(centerTiles[i]), 1);
+                }
+
+                genFullHorizontal(fixedTileNumList, rows, columns);
+                return true;
+            } else {
+                return false;
+            }
+        },
+        // Just corners [6]
         () => {return true;}
     ]
 
