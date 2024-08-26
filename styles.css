@@ -1,0 +1,42 @@
+html {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+    min-height: 100%;
+}
+
+#controls {
+    margin: 20px;
+}
+
+#grid {
+    display: grid;
+    margin-top: 20px;
+}
+
+.tile {
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.dragging {
+    position: absolute;
+    pointer-events: none;
+    transition: transform 0.3s ease;
+    transform: scale(1.25);
+    z-index: 1000;
+}
+
+.swapping {
+    transition: transform 0.18s ease;
+    /* transition: top 2s ease, left 2s ease; */
+}
