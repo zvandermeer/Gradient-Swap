@@ -30,7 +30,6 @@ document.body.addEventListener('mousedown', (e) => {
 });
 
 document.body.addEventListener('mouseup', async (e) => {
-    console.log(e.target.classList);
     if (draggedTile) {
         if(e.target.classList.contains('tile') && !e.target.classList.contains('placeholder')) {
             newTile = e.target;
@@ -91,9 +90,43 @@ const generateButton = document.getElementById('generate');
 
 generateButton.addEventListener('click', generateGrid);
 
+// Function to interpolate between two colors
+function interpolateColor(color1, color2, factor) {
+    const result = color1.slice(1).match(/.{2}/g).map((hex, i) => {
+        return Math.round(parseInt(hex, 16) + factor * (parseInt(color2.slice(1).match(/.{2}/g)[i], 16) - parseInt(hex, 16)));
+    });
+    return `#${result.map(x => x.toString(16).padStart(2, '0')).join('')}`;
+}
+
+// Function to generate the gradient grid
+function generateGradientGrid(c1, c2, c3, c4, width, height) {
+    const grid = [];
+    for (let y = 0; y < height; y++) {
+        const row = [];
+        for (let x = 0; x < width; x++) {
+            // Interpolate between the top and bottom edges
+            const colorTop = interpolateColor(c1, c2, x / (width - 1));
+            const colorBottom = interpolateColor(c3, c4, x / (width - 1));
+            // Interpolate between the result of the top and bottom
+            const color = interpolateColor(colorTop, colorBottom, y / (height - 1));
+            row.push(color);
+        }
+        grid.push(row);
+    }
+    return grid;
+}
+
+// Define the four corner colors
+const color1 = "#ff0000"; // Top-left (red)
+const color2 = "#00ff00"; // Top-right (green)
+const color3 = "#0000ff"; // Bottom-left (blue)
+const color4 = "#ffff00"; // Bottom-right (yellow)
+
 function generateGrid() {
     const rows = document.getElementById('rows').value;
     const columns = document.getElementById('columns').value;
+
+    colorGrid = generateGradientGrid(color1, color2, color3, color4, rows, columns);
 
     // Clear existing grid
     grid.innerHTML = '';
@@ -103,13 +136,15 @@ function generateGrid() {
     grid.style.gridTemplateRows = `repeat(${rows}, 100px)`;
 
     // Generate new grid of tiles with random colors
-    for (let i = 0; i < rows * columns; i++) {
-        const tile = document.createElement('div');
-        tile.classList.add('tile');
-        tile.style.backgroundColor = getRandomColor();
-        // tile.style.position = "fixed";
-        tile.draggable = false;
-        grid.appendChild(tile);
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < columns; j++) {
+            const tile = document.createElement('div');
+            tile.classList.add('tile');
+            tile.style.backgroundColor = colorGrid[i][j];
+            // tile.style.position = "fixed";
+            tile.draggable = false;
+            grid.appendChild(tile);
+        }
     }
 
     addDragAndDropListeners();
