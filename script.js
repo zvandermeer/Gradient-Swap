@@ -36,9 +36,14 @@ solutionButton.addEventListener('click', () => {
     generateGrid();
 });
 
-// Generic helper sleep function
+// Helper sleep function
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Helper clamp function
+function clamp(num, lower, upper) {
+    return Math.min(Math.max(num, lower), upper);
 }
 
 // Reports the position of the cursor every time it moves
@@ -249,10 +254,19 @@ function generateGrid() {
 
     // Clear existing grid
     grid.innerHTML = '';
+
+    const gridPos = grid.getBoundingClientRect();
+    console.log(gridPos);
+
+    const availableScreenWidth = window.innerWidth - 40;
+    const availableScreenHeight = window.innerHeight - (gridPos.top + 20);
+
+    const tileWidth = clamp((availableScreenWidth / columns), 0, 100);
+    const tileHeight = clamp((availableScreenHeight / rows), 0, 100);
     
     // Update grid template
-    grid.style.gridTemplateColumns = `repeat(${columns}, 100px)`;
-    grid.style.gridTemplateRows = `repeat(${rows}, 100px)`;
+    grid.style.gridTemplateColumns = `repeat(${columns}, ${tileWidth}px)`;
+    grid.style.gridTemplateRows = `repeat(${rows}, ${tileHeight}px)`;
 
     let counter = 0;
 
@@ -263,15 +277,21 @@ function generateGrid() {
             const tile = document.createElement('div');
             tile.classList.add('tile');
             tile.style.backgroundColor = colorGrid[i][j];
+            tile.style.width = tileWidth + 'px';
+            tile.style.height = tileHeight + 'px';
             tile.draggable = false;
             tile.setAttribute('tile-num', counter)
 
             // If tile is fixed, add additional properties
             if(fixedTileNumList.includes(counter)) {
                 tile.classList.add('fixed');
-                
+                 
                 const centerDot = document.createElement('div');
                 centerDot.classList.add('dot');
+                const dotSize = (((tileWidth / 10) + (tileHeight / 10)) / 2);
+                centerDot.style.width = dotSize + 'px';
+                centerDot.style.height = dotSize + 'px';
+                centerDot.style.transform = "translate(" + ((tileWidth-dotSize)/2) + "px," + ((tileHeight-dotSize)/2) + "px)";
 
                 tile.appendChild(centerDot);
             }
