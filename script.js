@@ -12,12 +12,19 @@ let color4 = null;
 let cursorX = null;
 let cursorY = null;
 
+let swaps = 0;
+
+let timerRunning = false;
+let timerSeconds = 0;
+
 // Add listeners to report constant cursor position
 document.addEventListener('touchmove', onCursorMove);
 document.addEventListener('mousemove', onCursorMove);
 
 // Pull existing elements from HTML
 const grid = document.getElementById('grid');
+const swapCounter = document.getElementById('swaps');
+const timer = document.getElementById('timer');
 
 // Generate button should create a new fully randomized grid
 const generateButton = document.getElementById('generate');
@@ -32,7 +39,8 @@ generateButton.addEventListener('click', () => {
 const solutionButton = document.getElementById('solution');
 solutionButton.addEventListener('click', () => {
     randomize = false;
-    // puzzleSolved = true;
+    puzzleSolved = true;
+    timerRunning = false;
     generateGrid();
 });
 
@@ -64,6 +72,8 @@ function moveAt(pageX, pageY) {
 
 // Adds listeners to start dragging when tile is selected
 document.body.addEventListener('touchstart', (e) => {
+    // Temporary, this is to prevent dragging if the user is zooming
+    // (Necessary because iOS safari zooms in on number boxes when entering values, eventually will use a different system)
     if (placeholderTile) {
         cancelDrag(true);
     }
@@ -77,6 +87,23 @@ document.body.addEventListener('mousedown', (e) => {startDrag(e, false);});
 function startDrag(e, touch) {
     // Ensures the tile should be dragged
     if (e.target.classList.contains('tile') && !e.target.classList.contains('placeholder') && !e.target.classList.contains('fixed') && !puzzleSolved) {
+        if(!timerRunning) {
+            timerRunning = true;
+            var x = setInterval(function() {
+                if (timerRunning) {
+                    timerSeconds++;
+
+                    let minutes = Math.floor(timerSeconds/60);
+                    let seconds = timerSeconds%60;
+
+                    timer.innerHTML = minutes + ":" + seconds.toString().padStart(2, '0');
+
+                } else {
+                    clearInterval(x);
+                }
+            }, 1000);
+        }
+        
         draggedTile = e.target;
         draggedTile.classList.add('dragging');
         moveAt(e.pageX, e.pageY);
@@ -107,6 +134,10 @@ async function stopDrag(touch) {
         // Gets the nearest tile to swap with
         let element = document.elementsFromPoint(cursorX, cursorY)[0];
         if(element.classList.contains('tile') && !element.classList.contains('placeholder')) {
+            swaps++;
+
+            swapCounter.innerHTML = "Swaps: " + swaps;
+
             newTile = element;
 
             // Gets coordinates of tiles to swap
@@ -163,6 +194,7 @@ async function stopDrag(touch) {
                 }
                 if(i === totalSquares) {
                     puzzleSolved = true;
+                    timerRunning = false;
                     console.log("You win!");
                 }
             }
