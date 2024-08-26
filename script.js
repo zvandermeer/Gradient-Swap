@@ -9,6 +9,8 @@ let color2 = null;
 let color3 = null;
 let color4 = null;
 
+let fixedTileNumList = null;
+
 let cursorX = null;
 let cursorY = null;
 
@@ -31,7 +33,9 @@ const generateButton = document.getElementById('generate');
 generateButton.addEventListener('click', () => {
     randomize = true;
     puzzleSolved = false;
-    randomizeCornerColors();
+    timerRunning = false;
+    timer.innerHTML = "0:00";
+    timerSeconds = 0;
     generateGrid();
 });
 
@@ -133,7 +137,7 @@ async function stopDrag(touch) {
     if (draggedTile) {
         // Gets the nearest tile to swap with
         let element = document.elementsFromPoint(cursorX, cursorY)[0];
-        if(element.classList.contains('tile') && !element.classList.contains('placeholder')) {
+        if(element.classList.contains('tile') && !element.classList.contains('placeholder') && !element.classList.contains('fixed')) {
             swaps++;
 
             swapCounter.innerHTML = "Swaps: " + swaps;
@@ -390,11 +394,17 @@ function generateGrid() {
     const rows = document.getElementById('rows').value;
     const columns = document.getElementById('columns').value;
 
+    if(randomize) {
+        randomizeCornerColors();
+    }
+
     // Generate gradient colors for grid
     let colorGrid = generateGradientGrid(color1, color2, color3, color4, columns, rows);
 
-    // Create fixed tile pattern, setting corners as fixed TODO: Add more fixed tile patterns
-    let fixedTileNumList = chooseFixedTiles(rows, columns);
+    // Create fixed tile pattern, setting corners as fixed
+    if(randomize) {
+        fixedTileNumList = chooseFixedTiles(rows, columns);
+    }
 
     // Initialize lists of random and fixed tiles
     var randomTileList = [];
@@ -474,5 +484,4 @@ function generateGrid() {
 }
 
 // Generate initial grid
-randomizeCornerColors();
 generateGrid();
