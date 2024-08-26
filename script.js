@@ -32,7 +32,7 @@ generateButton.addEventListener('click', () => {
 const solutionButton = document.getElementById('solution');
 solutionButton.addEventListener('click', () => {
     randomize = false;
-    puzzleSolved = true;
+    // puzzleSolved = true;
     generateGrid();
 });
 
@@ -141,24 +141,29 @@ async function stopDrag(touch) {
             newTile.style.top = null;
             newTile.style.transform = null;
 
+            placeholderTile.remove();
+            placeholderTile = null;
+
+            // Finalizes the dragged tile back to a stationary position
+            draggedTile.classList.remove('dragging');
+
+            draggedTile.style.left = null;
+            draggedTile.style.top = null;
+            draggedTile.style.transform = null;
+            draggedTile = null;
+
             // Evaluates if player has solved the puzzle
             var gridChildren = grid.children;
             var totalSquares = gridChildren.length - 1;
 
-            var placeholderOffset = 0;
-
+            // If each tile in the grid is in ascending order, then the player wins
             winCheck: for(var i = 0; i < gridChildren.length; i++) {
-                if(!gridChildren[i].classList.contains('placeholder')) {
-                    if(parseInt(gridChildren[i].getAttribute('tile-num')) != i - placeholderOffset) {
-                        break winCheck;
-                    }
-                    if(i === totalSquares) {
-                        puzzleSolved = true;
-                    }
-                } else {
-                    // If running into a placeholder, then the tile comparisons get messed up.
-                    // TODO: Hacky solution, could possibly lead to bug triggering win condition early
-                    placeholderOffset = 1;
+                if(parseInt(gridChildren[i].getAttribute('tile-num')) != i) {
+                    break winCheck;
+                }
+                if(i === totalSquares) {
+                    puzzleSolved = true;
+                    console.log("You win!");
                 }
             }
 
@@ -172,10 +177,18 @@ async function stopDrag(touch) {
             await sleep(180);
 
             draggedTile.classList.remove('swapping');
-        }
 
-        placeholderTile.remove();
-        placeholderTile = null;
+            placeholderTile.remove();
+            placeholderTile = null;
+
+            // Finalizes the dragged tile back to a stationary position
+            draggedTile.classList.remove('dragging');
+
+            draggedTile.style.left = null;
+            draggedTile.style.top = null;
+            draggedTile.style.transform = null;
+            draggedTile = null;
+        }
 
         // Removes listener moving tile with cursor
         if(touch) {
@@ -183,15 +196,6 @@ async function stopDrag(touch) {
         } else {
             document.removeEventListener('mousemove', onItemDrag);
         }
-
-
-        // Finalizes the dragged tile back to a stationary position
-        draggedTile.classList.remove('dragging');
-
-        draggedTile.style.left = null;
-        draggedTile.style.top = null;
-        draggedTile.style.transform = null;
-        draggedTile = null;
     }
 }
 
@@ -293,7 +297,6 @@ function generateGrid() {
     grid.innerHTML = '';
 
     const gridPos = grid.getBoundingClientRect();
-    console.log(gridPos);
 
     const availableScreenWidth = window.innerWidth - 40;
     const availableScreenHeight = window.innerHeight - (gridPos.top + 20);
