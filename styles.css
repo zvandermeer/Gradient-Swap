@@ -37,7 +37,15 @@ body {
     z-index: 1000;
 }
 
+.dot {
+    width: 10px;
+    height: 10px;
+    background-color: black;
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(45px, 45px);
+}
+
 .swapping {
     transition: transform 0.18s ease;
-    /* transition: top 2s ease, left 2s ease; */
 }

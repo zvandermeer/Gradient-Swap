@@ -222,8 +222,16 @@ function generateGrid() {
             tile.style.backgroundColor = colorGrid[i][j];
             tile.draggable = false;
             tile.setAttribute('tile-num', counter)
+            if(fixedTileNumList.includes(counter)) {
+                tile.classList.add('fixed');
+                
+                const centerDot = document.createElement('div');
+                centerDot.classList.add('dot');
+
+                tile.appendChild(centerDot);
+            }
             if(randomize) {
-                if(fixedTileNumList.includes(counter)) {
+                if(tile.classList.contains('fixed')) {
                     fixedTileList.push(tile);
                 } else {
                     randomTileList.push(tile);
