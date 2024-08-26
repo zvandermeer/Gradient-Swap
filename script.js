@@ -1,11 +1,19 @@
 let draggedTile = null;
 let placeholderTile = null;
+let randomize = true;
 
-// Define the four corner colors
-const color1 = getRandomColor(); // Top-left (red)
-const color2 = getRandomColor(); // Top-right (green)
-const color3 = getRandomColor(); // Bottom-left (blue)
-const color4 = getRandomColor(); // Bottom-right (yellow)
+let color1 = null;
+let color2 = null;
+let color3 = null;
+let color4 = null;
+
+function randomizeCornerColors() {
+    // Define the four corner colors
+    color1 = getRandomColor(); // Top-left (red)
+    color2 = getRandomColor(); // Top-right (green)
+    color3 = getRandomColor(); // Bottom-left (blue)
+    color4 = getRandomColor(); // Bottom-right (yellow)
+}
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -92,9 +100,19 @@ document.body.addEventListener('mouseup', async (e) => {
 });
 
 const grid = document.getElementById('grid');
-const generateButton = document.getElementById('generate');
 
-generateButton.addEventListener('click', generateGrid);
+const generateButton = document.getElementById('generate');
+generateButton.addEventListener('click', () => {
+    randomize = true;
+    randomizeCornerColors();
+    generateGrid();
+});
+
+const solutionButton = document.getElementById('solution');
+solutionButton.addEventListener('click', () => {
+    randomize = false;
+    generateGrid();
+});
 
 // Function to interpolate between two colors
 function interpolateColor(color1, color2, factor) {
@@ -146,8 +164,6 @@ function generateGrid() {
 
     let counter = 0;
 
-    let randomize = false;
-
     // Generate new grid of tiles with random colors
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < columns; j++) {
@@ -192,4 +208,5 @@ function getRandomColor() {
 }
 
 // Generate initial grid
+randomizeCornerColors();
 generateGrid();
