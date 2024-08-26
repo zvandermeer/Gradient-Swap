@@ -7,6 +7,12 @@ let color2 = null;
 let color3 = null;
 let color4 = null;
 
+let cursorX = null;
+let cursorY = null;
+
+document.addEventListener('touchmove', onCursorMove);
+document.addEventListener('mousemove', onCursorMove);
+
 function randomizeCornerColors() {
     // Define the four corner colors
     color1 = getRandomColor(); // Top-left (red)
@@ -19,8 +25,13 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function onMouseMove(event) {
-    moveAt(event.pageX, event.pageY);
+function onCursorMove(event) {
+    cursorX = event.pageX;
+    cursorY = event.pageY
+}
+
+function onItemDrag() {
+    moveAt(cursorX, cursorY);
 }
 
 function moveAt(pageX, pageY) {
@@ -28,7 +39,7 @@ function moveAt(pageX, pageY) {
     draggedTile.style.top = pageY - draggedTile.offsetHeight / 2 + 'px';
 }
 
-document.body.addEventListener('mousedown', (e) => {
+function startDrag(e, touch) {
     if (e.target.classList.contains('tile') && !e.target.classList.contains('placeholder')) {
         draggedTile = e.target;
         draggedTile.classList.add('dragging');
@@ -39,14 +50,23 @@ document.body.addEventListener('mousedown', (e) => {
         placeholderTile.style.backgroundColor = "white";
         grid.insertBefore(placeholderTile, draggedTile.nextSibling)
 
-        document.addEventListener('mousemove', onMouseMove);
+        if(touch) {
+            document.addEventListener('touchmove', onItemDrag);
+        } else {
+            document.addEventListener('mousemove', onItemDrag);
+        }
     }
-});
+}
 
-document.body.addEventListener('mouseup', async (e) => {
+document.body.addEventListener('touchstart', (e) => {startDrag(e, true)});
+document.body.addEventListener('mousedown', (e) => {startDrag(e, false)});
+
+async function stopDrag(e, touch) {
     if (draggedTile) {
-        if(e.target.classList.contains('tile') && !e.target.classList.contains('placeholder')) {
-            newTile = e.target;
+        let element = document.elementsFromPoint(cursorX, cursorY)[0];
+        console.log(element);
+        if(element.classList.contains('tile') && !element.classList.contains('placeholder')) {
+            newTile = element;
 
             oldTilePos = placeholderTile.getBoundingClientRect();
             newTilePos = newTile.getBoundingClientRect();
@@ -88,7 +108,11 @@ document.body.addEventListener('mouseup', async (e) => {
         placeholderTile.remove();
         placeholderTile = null;
 
-        document.removeEventListener('mousemove', onMouseMove);
+        if(touch) {
+            document.removeEventListener('touchmove', onItemDrag);
+        } else {
+            document.removeEventListener('mousemove', onItemDrag);
+        }
 
         draggedTile.classList.remove('dragging');
 
@@ -97,7 +121,10 @@ document.body.addEventListener('mouseup', async (e) => {
         draggedTile.style.transform = null;
         draggedTile = null;
     }
-});
+}
+
+document.body.addEventListener('touchend', (e) => {stopDrag(e, true)});
+document.body.addEventListener('mouseup', (e) => {stopDrag(e, false)});
 
 const grid = document.getElementById('grid');
 
