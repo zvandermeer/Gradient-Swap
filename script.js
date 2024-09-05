@@ -19,6 +19,8 @@ let swaps = 0;
 let timerRunning = false;
 let timerSeconds = 0;
 
+let tileToBeStopped = false;
+
 // Add listeners to report constant cursor position
 document.addEventListener('touchmove', onCursorMove);
 document.addEventListener('mousemove', onCursorMove);
@@ -27,6 +29,7 @@ document.addEventListener('mousemove', onCursorMove);
 const grid = document.getElementById('grid');
 const swapCounter = document.getElementById('swaps');
 const timer = document.getElementById('timer');
+const cheaterMode = document.getElementById('cheater');
 
 // Generate button should create a new fully randomized grid
 const generateButton = document.getElementById('generate');
@@ -43,8 +46,10 @@ generateButton.addEventListener('click', () => {
 const solutionButton = document.getElementById('solution');
 solutionButton.addEventListener('click', () => {
     randomize = false;
-    puzzleSolved = true;
-    timerRunning = false;
+    if(!cheaterMode.checked) {
+        puzzleSolved = true;
+        timerRunning = false;
+    }
     generateGrid();
 });
 
@@ -76,11 +81,6 @@ function moveAt(pageX, pageY) {
 
 // Adds listeners to start dragging when tile is selected
 document.body.addEventListener('touchstart', (e) => {
-    // Temporary, this is to prevent dragging if the user is zooming
-    // (Necessary because iOS safari zooms in on number boxes when entering values, eventually will use a different system)
-    if (placeholderTile) {
-        cancelDrag(true);
-    }
     if(e.touches.length === 1){
         startDrag(e, true);
     }
@@ -90,7 +90,7 @@ document.body.addEventListener('mousedown', (e) => {startDrag(e, false);});
 // Starts dragging the selected tile
 function startDrag(e, touch) {
     // Ensures the tile should be dragged
-    if (e.target.classList.contains('tile') && !e.target.classList.contains('placeholder') && !e.target.classList.contains('fixed') && !puzzleSolved) {
+    if (e.target.classList.contains('tile') && !e.target.classList.contains('placeholder') && !e.target.classList.contains('fixed') && !puzzleSolved && !draggedTile) {
         if(!timerRunning) {
             timerRunning = true;
             var x = setInterval(function() {
@@ -124,6 +124,8 @@ function startDrag(e, touch) {
         } else {
             document.addEventListener('mousemove', onItemDrag);
         }
+
+        tileToBeStopped = true;
     }
 }
 
@@ -134,7 +136,8 @@ document.body.addEventListener('mouseup', () => {stopDrag(false)});
 // Stops dragging the selected tile
 async function stopDrag(touch) {
     // Ensures a tile is being dragged
-    if (draggedTile) {
+    if (tileToBeStopped) {
+        tileToBeStopped = false;
         // Gets the nearest tile to swap with
         let element = document.elementsFromPoint(cursorX, cursorY)[0];
         if(element.classList.contains('tile') && !element.classList.contains('placeholder') && !element.classList.contains('fixed')) {
@@ -155,13 +158,15 @@ async function stopDrag(touch) {
             // Animates swapped tile to the dragged tile's old position
             newTile.classList.add('swapping');
             newTile.style.transform = "translate(" + (oldTilePos.left - newTilePos.left) + "px," + (oldTilePos.top - newTilePos.top) + "px)";
-            
+
             // Waits for the animation to finish
             await sleep(180);
 
             // Swaps actual tile element positions after animation is finished
             draggedTile.classList.remove('swapping');
             newTile.classList.remove('swapping');
+
+            draggedTile.classList.remove('dragging');
 
             const temp = document.createElement('div');
             
@@ -180,8 +185,6 @@ async function stopDrag(touch) {
             placeholderTile = null;
 
             // Finalizes the dragged tile back to a stationary position
-            draggedTile.classList.remove('dragging');
-
             draggedTile.style.left = null;
             draggedTile.style.top = null;
             draggedTile.style.transform = null;
@@ -233,36 +236,6 @@ async function stopDrag(touch) {
             document.removeEventListener('mousemove', onItemDrag);
         }
     }
-}
-
-// If the tile drag needs to be cancelled for whatever reason
-async function cancelDrag(touch) {
-    let oldTilePos = placeholderTile.getBoundingClientRect();
-
-    draggedTile.classList.add('swapping');
-    draggedTile.style.transform = "translate(" + (oldTilePos.left - parseInt(draggedTile.style.left.slice(0, -2))) + "px," + (oldTilePos.top - parseInt(draggedTile.style.top.slice(0, -2))) + "px)";
-
-    await sleep(180);
-
-    draggedTile.classList.remove('swapping');
-
-    placeholderTile.remove();
-    placeholderTile = null;
-
-    // Removes listener moving tile with cursor
-    if(touch) {
-        document.removeEventListener('touchmove', onItemDrag);
-    } else {
-        document.removeEventListener('mousemove', onItemDrag);
-    }
-
-    // Finalizes the dragged tile back to a stationary position
-    draggedTile.classList.remove('dragging');
-
-    draggedTile.style.left = null;
-    draggedTile.style.top = null;
-    draggedTile.style.transform = null;
-    draggedTile = null;
 }
 
 // Selects random colors for the corners which will be used to generate the gradient
@@ -548,7 +521,7 @@ function generateGrid() {
             tile.style.width = tileWidth + 'px';
             tile.style.height = tileHeight + 'px';
             tile.draggable = false;
-            tile.setAttribute('tile-num', counter)
+            tile.setAttribute('tile-num', counter);
 
             // If tile is fixed, add additional properties
             if(fixedTileNumList.includes(counter)) {

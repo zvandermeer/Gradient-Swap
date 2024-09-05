@@ -10,7 +10,7 @@ body {
     background-color: #f0f0f0;
     font-family: Arial, sans-serif;
     min-height: 100%;
-    touch-action: pinch-zoom;
+    touch-action: none;
 }
 
 #controls {
@@ -26,6 +26,11 @@ body {
     width: 100px;
     height: 100px;
     cursor: pointer;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
     user-select: none;
 }
 
