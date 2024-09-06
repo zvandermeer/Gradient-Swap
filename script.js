@@ -20,7 +20,7 @@ let timerSeconds = 0;
 
 let tileToBeStopped = false;
 
-const colorSimilarityThreshold = 9;
+const colorSimilarityThreshold = 25;
 
 // Add listeners to report constant cursor position
 document.addEventListener('touchmove', onCursorMove);
