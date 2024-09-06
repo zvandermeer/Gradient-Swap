@@ -40,6 +40,8 @@ generateButton.addEventListener('click', () => {
     timerRunning = false;
     timer.innerHTML = "0:00";
     timerSeconds = 0;
+    swaps = 0;
+    swapCounter.innerHTML = "Swaps: " + swaps;
     generateGrid();
 });
 
