@@ -1,3 +1,7 @@
+// import JSConfetti from 'js-confetti'
+
+const jsConfetti = new JSConfetti()
+
 let draggedTile = null;
 let placeholderTile = null;
 
@@ -203,6 +207,7 @@ async function stopDrag(touch) {
                     puzzleSolved = true;
                     timerRunning = false;
                     console.log("You win!");
+                    jsConfetti.addConfetti();
                 }
             }
 
