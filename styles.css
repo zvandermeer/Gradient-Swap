@@ -3,14 +3,95 @@ html {
 }
 
 body {
+    background-color: #fff9e7;
+    font-family: Montserrat, sans-serif;
+    min-height: 100%;
+    touch-action: none;
+}
+
+#welcome-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+}
+.dimension-button-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex-basis: 50%;
+    justify-content: center;
+    padding-bottom: 30px;
+    padding-top: 10px;
+}
+.dimension-button {
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+    width: 100%;
+    justify-content: center;
+}
+.dimension-button button {
+    height: 45px;
+    width: 45px;
+}
+.dimension-button button:hover {
+    cursor:pointer;
+}
+.dimension-button p {
+    padding: 0 20px 0 20px;
+}
+.inliners {
+    display: inline-block;
+}
+.button {
+    background-color: #04AA6D; /* Green */
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 30%;
+    font-family: Montserrat, sans-serif;
+}
+.create-button {
+    font-size: 20px;
+    height: 60px;
+    width: 160px;
+    border-radius: 17px;
+}
+.fade-in {
+    animation: fadeInAnimation ease 1.6s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+@keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.fade-out {
+    animation: fadeOutAnimation ease 1.3s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+@keyframes fadeOutAnimation {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+#game-screen {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 0;
-    background-color: #fff9e7;
-    font-family: Arial, sans-serif;
-    min-height: 100%;
-    touch-action: none;
 }
 
 #controls {

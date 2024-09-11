@@ -22,15 +22,69 @@ let tileToBeStopped = false;
 
 const colorSimilarityThreshold = 25;
 
+let puzzleReady = false;
+
 // Add listeners to report constant cursor position
 document.addEventListener('touchmove', onCursorMove);
 document.addEventListener('mousemove', onCursorMove);
 
 // Pull existing elements from HTML
+const welcomeScreen = document.getElementById('welcome-screen');
+const gameScreen = document.getElementById('game-screen');
 const grid = document.getElementById('grid');
 const swapCounter = document.getElementById('swaps');
 const timer = document.getElementById('timer');
 const cheaterMode = document.getElementById('cheater');
+
+const widthLabel = document.getElementById('widthLabel');
+const widthPlusButton = document.getElementById('widthPlusButton');
+widthPlusButton.addEventListener('click', () => {
+    let width = parseInt(widthLabel.innerHTML);
+    if(width < 20) {
+        widthLabel.innerHTML = width += 1;
+    }
+})
+const widthMinusButton = document.getElementById('widthMinusButton');
+widthMinusButton.addEventListener('click', () => {
+    let width = parseInt(widthLabel.innerHTML);
+    if(width > 3) {
+        widthLabel.innerHTML = width -= 1;
+    }
+})
+
+const heightLabel = document.getElementById('heightLabel');
+const heightPlusButton = document.getElementById('heightPlusButton');
+heightPlusButton.addEventListener('click', () => {
+    let height = parseInt(heightLabel.innerHTML);
+    if(height < 20) {
+        heightLabel.innerHTML = height += 1;
+    }
+})
+const heightMinusButton = document.getElementById('heightMinusButton');
+heightMinusButton.addEventListener('click', () => {
+    let height = parseInt(heightLabel.innerHTML);
+    if(height > 3) {
+        heightLabel.innerHTML = height -= 1;
+    }
+})
+
+const createButton = document.getElementById("gridCreateButton");
+createButton.addEventListener('click', async () => {
+    randomize = true;
+    puzzleSolved = false;
+    timerRunning = false;
+    timer.innerHTML = "0:00";
+    timerSeconds = 0;
+    swaps = 0;
+    swapCounter.innerHTML = "Swaps: " + swaps;
+    generateGrid();
+    welcomeScreen.classList.add('fade-out');
+    await sleep(1300);
+    welcomeScreen.style.display = 'none';
+    while(!puzzleReady){};
+    gameScreen.classList.add('fade-in');
+    gameScreen.style.display = '';
+})
 
 // Generate button should create a new fully randomized grid
 const generateButton = document.getElementById('generate');
@@ -538,8 +592,9 @@ function chooseFixedTiles(rows, columns) {
 
 // Generate a new tile grid
 function generateGrid() {
-    const rows = document.getElementById('rows').value;
-    const columns = document.getElementById('columns').value;
+    puzzleReady = false;
+    const rows = parseInt(heightLabel.innerHTML);
+    const columns = parseInt(widthLabel.innerHTML);
 
     if(randomize) {
         randomizeCornerColors();
@@ -628,7 +683,6 @@ function generateGrid() {
             }
         }
     }
-}
 
-// Generate initial grid
-generateGrid();
+    puzzleReady = true;
+}

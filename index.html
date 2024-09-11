@@ -5,23 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>Gradient Swap!</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
 </head>
 <body>
-    <div id="controls">
-        <label for="rows">Rows:</label>
-        <input type="number" id="rows" value="6" min="3" max="20">
-        <label for="columns">Columns:</label>
-        <input type="number" id="columns" value="6" min="3" max="20">
-        <button id="generate">Generate Grid</button>
-        <button id="solution">Show Solution?</button>
-        <span id="swaps">Swaps: 0</span>
-        <span id="timer">0:00</span>
-        <input type="checkbox" id="cheater">
-        <label for="vehicle1"> Enable cheater mode</label><br>
+    <div id="welcome-screen">
+        <div>
+            <h1>Gradient Swap!</h1>
+            <h2>Select your grid dimensions</h2>
+        </div>
+        <div class="dimension-button-container">
+            <div>Width</div>
+            <div class="dimension-button">
+                <button id="widthPlusButton" class="button"><i class="bi-plus"></i></button>
+                <p id="widthLabel">6</p>
+                <button id="widthMinusButton" class="button"><i class="bi-dash"></i></button>
+            </div>
+            <div>Height</div>
+            <div class="dimension-button">
+                <button id="heightPlusButton" class="button"><i class="bi-plus"></i></button>
+                <p id="heightLabel">6</p>
+                <button id="heightMinusButton" class="button"><i class="bi-dash"></i></button>
+            </div>
+        </div>
+        <button id="gridCreateButton", class="button create-button">Generate grid!</button>
     </div>
-    
-    <div id="grid"></div>
+
+    <div id="game-screen" style="display: none;">
+        <div id="controls">
+            <label for="rows">Rows:</label>
+            <input type="number" id="rows" value="6" min="3" max="20">
+            <label for="columns">Columns:</label>
+            <input type="number" id="columns" value="6" min="3" max="20">
+            <button id="generate">Generate Grid</button>
+            <button id="solution">Show Solution?</button>
+            <span id="swaps">Swaps: 0</span>
+            <span id="timer">0:00</span>
+            <input type="checkbox" id="cheater">
+        </div>
+        
+        <div id="grid"></div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
     <script src="script.js"></script>
