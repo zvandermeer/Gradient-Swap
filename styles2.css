@@ -48,7 +48,33 @@ body {
 }
 .create-button {
     font-size: 20px;
-    height: 50px;
+    height: 60px;
     width: 160px;
     border-radius: 17px;
+}
+.fade-in {
+    animation: fadeInAnimation ease 1.6s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+@keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.fade-out {
+    animation: fadeOutAnimation ease 1.3s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+@keyframes fadeOutAnimation {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }
