@@ -153,6 +153,9 @@ function startDrag(e, touch) {
                 }
             }, 1000);
         }
+
+        cursorX = e.pageX
+        cursorY = e.pageY
         
         draggedTile = e.target;
         draggedTile.classList.add('dragging');
