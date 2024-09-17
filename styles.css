@@ -106,7 +106,6 @@ body {
 .tile {
     width: 100px;
     height: 100px;
-    cursor: pointer;
     -webkit-touch-callout:none;
     -webkit-user-select:none;
     -moz-user-select: none;
@@ -132,6 +131,10 @@ body {
 
 .swapping {
     transition: transform 0.18s ease;
+}
+
+.draggable {
+    cursor: pointer;
 }
 
 /* .shrink {

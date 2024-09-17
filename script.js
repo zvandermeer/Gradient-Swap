@@ -202,7 +202,7 @@ document.body.addEventListener('mousedown', (e) => {startDrag(e, false);});
 // Starts dragging the selected tile
 function startDrag(e, touch) {
     // Ensures the tile should be dragged
-    if (e.target.classList.contains('tile') && !e.target.classList.contains('placeholder') && !e.target.classList.contains('fixed') && !puzzleSolved && !draggedTile) {
+    if (e.target.classList.contains('tile') && e.target.classList.contains('draggable') && !puzzleSolved && !draggedTile) {
         if(!timerRunning) {
             timerRunning = true;
             var x = setInterval(function() {
@@ -252,7 +252,7 @@ async function stopDrag(touch) {
         tileToBeStopped = false;
         // Gets the nearest tile to swap with
         let element = document.elementsFromPoint(cursorX, cursorY)[0];
-        if(element.classList.contains('tile') && !element.classList.contains('placeholder') && !element.classList.contains('fixed')) {
+        if(element.classList.contains('tile') && element.classList.contains('draggable')) {
             swaps++;
 
             swapCounter.innerHTML = "Swaps: " + swaps;
@@ -703,11 +703,19 @@ function transitionTiles(reorderTiles) {
     var gridChildren = grid.children;
     for(let i = 0; i < fullTileList.length; i++) {
         if(!gridChildren[i].classList.contains('fixed')) {
+            gridChildren[i].classList.remove('draggable');
+
             gridChildren[i].style.transform = "scale(0)";
+
             setTimeout(() => {
                 gridChildren[i].style.transform = "scale(1)";
-                sleep(600);
-            }, 1100);
+            }, 1000);
+
+            if(!puzzleSolved) {
+                setTimeout(() => {
+                    gridChildren[i].classList.add('draggable');
+                }, 1700);
+            }
         }
     }
 
