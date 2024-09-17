@@ -38,6 +38,7 @@ const grid = document.getElementById('grid');
 const swapCounter = document.getElementById('swaps');
 const timer = document.getElementById('timer');
 const cheaterMode = document.getElementById('cheater');
+const finalOverlay = document.querySelector('.final-overlay');
 
 const widthLabel = document.getElementById('widthLabel');
 const widthPlusButton = document.getElementById('widthPlusButton');
@@ -316,6 +317,8 @@ async function stopDrag(touch) {
                     timerRunning = false;
                     console.log("You win!");
                     jsConfetti.addConfetti();
+                    await sleep(1800);
+                    finalOverlay.classList.remove('hidden');
                 }
             }
 
@@ -709,7 +712,7 @@ function transitionTiles(reorderTiles) {
 
             setTimeout(() => {
                 gridChildren[i].style.transform = "scale(1)";
-            }, 1000);
+            }, 800);
 
             if(!puzzleSolved) {
                 setTimeout(() => {
