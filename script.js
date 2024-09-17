@@ -3,7 +3,6 @@ const jsConfetti = new JSConfetti()
 let draggedTile = null;
 let placeholderTile = null;
 
-let randomize = true;
 let puzzleSolved = false;
 
 const cornerColors = [];
@@ -23,6 +22,10 @@ let tileToBeStopped = false;
 const colorSimilarityThreshold = 25;
 
 let puzzleReady = false;
+
+var randomTileList = [];
+var fixedTileList = [];
+var fullTileList = [];
 
 // Add listeners to report constant cursor position
 document.addEventListener('touchmove', onCursorMove);
@@ -70,7 +73,6 @@ heightMinusButton.addEventListener('click', () => {
 
 const createButton = document.getElementById("gridCreateButton");
 createButton.addEventListener('click', async () => {
-    randomize = true;
     puzzleSolved = false;
     timerRunning = false;
     timer.innerHTML = "0:00";
@@ -79,17 +81,19 @@ createButton.addEventListener('click', async () => {
     swapCounter.innerHTML = "Swaps: " + swaps;
     generateGrid();
     welcomeScreen.classList.add('fade-out');
-    await sleep(1300);
+    await sleep(600);
     welcomeScreen.style.display = 'none';
     while(!puzzleReady){};
     gameScreen.classList.add('fade-in');
     gameScreen.style.display = '';
+    await sleep(600);
+    await sleep(400);
+    transitionTiles(insertTilesRandom);
 })
 
 // Generate button should create a new fully randomized grid
 const generateButton = document.getElementById('generate');
-generateButton.addEventListener('click', () => {
-    randomize = true;
+generateButton.addEventListener('click', async () => {
     puzzleSolved = false;
     timerRunning = false;
     timer.innerHTML = "0:00";
@@ -97,17 +101,25 @@ generateButton.addEventListener('click', () => {
     swaps = 0;
     swapCounter.innerHTML = "Swaps: " + swaps;
     generateGrid();
+    welcomeScreen.classList.add('fade-out');
+    await sleep(600);
+    welcomeScreen.style.display = 'none';
+    while(!puzzleReady){};
+    gameScreen.classList.add('fade-in');
+    gameScreen.style.display = '';
+    await sleep(600);
+    await sleep(400);
+    transitionTiles(insertTilesRandom);
 });
 
 // Solve button should recreate the current grid without randomization
 const solutionButton = document.getElementById('solution');
 solutionButton.addEventListener('click', () => {
-    randomize = false;
     if(!cheaterMode.checked) {
         puzzleSolved = true;
         timerRunning = false;
     }
-    generateGrid();
+    transitionTiles(insertTilesOrdered);
 });
 
 function hexToRgb(hex) {
@@ -596,24 +608,13 @@ function generateGrid() {
     const rows = parseInt(heightLabel.innerHTML);
     const columns = parseInt(widthLabel.innerHTML);
 
-    if(randomize) {
-        randomizeCornerColors();
-    }
+    randomizeCornerColors();
 
     // Generate gradient colors for grid
     let colorGrid = generateGradientGrid(cornerColors[0], cornerColors[1], cornerColors[2], cornerColors[3], columns, rows);
 
     // Create fixed tile pattern, setting corners as fixed
-    if(randomize) {
-        fixedTileNumList = chooseFixedTiles(rows, columns);
-    }
-
-    // Initialize lists of random and fixed tiles
-    var randomTileList = [];
-    var fixedTileList = [];
-
-    // Clear existing grid
-    grid.innerHTML = '';
+    fixedTileNumList = chooseFixedTiles(rows, columns);
 
     const gridPos = grid.getBoundingClientRect();
 
@@ -655,34 +656,62 @@ function generateGrid() {
                 tile.appendChild(centerDot);
             }
 
-            // If the tiles are being randomized, separate fixed and unfixed tiles
-            if(randomize) {
-                if(tile.classList.contains('fixed')) {
-                    fixedTileList.push(tile);
-                } else {
-                    randomTileList.push(tile);
-                }
+            fullTileList.push(tile);
+
+            // Separate fixed and unfixed tiles
+            if(tile.classList.contains('fixed')) {
+                fixedTileList.push(tile);
             } else {
-                // If not randomizing, insert the tiles in gradient (created) order
-                grid.appendChild(tile);
+                randomTileList.push(tile);
             }
             counter++;
         }
     }
 
-    if(randomize) {
-        // For each tile, if that tile should be fixed, insert the applicable tile. Otherwise grab a random tile
-        // from the remaining uninserted tiles
-        for (let i = 0; i < counter; i++) {
-            if (fixedTileNumList.includes(i)) {
-                grid.appendChild(fixedTileList[fixedTileNumList.indexOf(i)]);
-            } else {
-                let randomIndex = Math.floor(Math.random() * randomTileList.length);
-                grid.appendChild(randomTileList[randomIndex]);
-                randomTileList.splice(randomIndex, 1);
-            }
+    insertTilesOrdered();
+
+    puzzleReady = true;
+}
+
+function insertTilesRandom() {
+    // Clear existing grid
+    grid.innerHTML = '';
+
+    for (let i = 0; i < fullTileList.length; i++) {
+        if (fixedTileNumList.includes(i)) {
+            grid.appendChild(fixedTileList[fixedTileNumList.indexOf(i)]);
+        } else {
+            let randomIndex = Math.floor(Math.random() * randomTileList.length);
+            grid.appendChild(randomTileList[randomIndex]);
+            randomTileList.splice(randomIndex, 1);
+        }
+    }
+}
+
+function insertTilesOrdered() {
+    // Clear existing grid
+    grid.innerHTML = '';
+
+    console.log(fullTileList);
+
+    for (let i = 0; i < fullTileList.length; i++) {
+        grid.appendChild(fullTileList[i]);
+    }
+}
+
+function transitionTiles(reorderTiles) {
+    var gridChildren = grid.children;
+    for(let i = 0; i < fullTileList.length; i++) {
+        if(!gridChildren[i].classList.contains('fixed')) {
+            gridChildren[i].style.transform = "scale(0)";
+            setTimeout(() => {
+                gridChildren[i].style.transform = "scale(1)";
+                sleep(600);
+            }, 1100);
         }
     }
 
-    puzzleReady = true;
+    setTimeout(() => {
+        reorderTiles();
+    }, 700);
 }

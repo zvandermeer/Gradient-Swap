@@ -62,7 +62,7 @@ body {
     border-radius: 17px;
 }
 .fade-in {
-    animation: fadeInAnimation ease 1.6s;
+    animation: fadeInAnimation ease .6s;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
 }
@@ -75,7 +75,7 @@ body {
     }
 }
 .fade-out {
-    animation: fadeOutAnimation ease 1.3s;
+    animation: fadeOutAnimation ease .6s;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
 }
@@ -113,6 +113,7 @@ body {
     -ms-user-select: none;
     -o-user-select: none;
     user-select: none;
+    transition: transform .6s ease;
 }
 
 .dragging {
@@ -132,3 +133,13 @@ body {
 .swapping {
     transition: transform 0.18s ease;
 }
+
+/* .shrink {
+    transition: transform .6s ease;
+    transform: scale(0);
+}
+
+.expand {
+    transition: transform .6s ease;
+    transform: scale(1);
+} */
