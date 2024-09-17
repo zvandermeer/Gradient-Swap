@@ -39,6 +39,8 @@ const swapCounter = document.getElementById('swaps');
 const timer = document.getElementById('timer');
 const cheaterMode = document.getElementById('cheater');
 const finalOverlay = document.querySelector('.final-overlay');
+const overlayTime = document.getElementById('overlayTime');
+const overlaySwaps = document.getElementById('overlaySwaps');
 
 const widthLabel = document.getElementById('widthLabel');
 const widthPlusButton = document.getElementById('widthPlusButton');
@@ -315,9 +317,15 @@ async function stopDrag(touch) {
                 if(i === totalSquares) {
                     puzzleSolved = true;
                     timerRunning = false;
-                    console.log("You win!");
                     jsConfetti.addConfetti();
                     await sleep(1800);
+
+                    let minutes = Math.floor(timerSeconds/60);
+                    let seconds = timerSeconds%60;
+
+                    overlayTime.innerHTML = minutes + ":" + seconds.toString().padStart(2, '0');
+
+                    overlaySwaps.innerHTML = swaps;
                     finalOverlay.classList.remove('hidden');
                 }
             }
@@ -694,8 +702,6 @@ function insertTilesRandom() {
 function insertTilesOrdered() {
     // Clear existing grid
     grid.innerHTML = '';
-
-    console.log(fullTileList);
 
     for (let i = 0; i < fullTileList.length; i++) {
         grid.appendChild(fullTileList[i]);

@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
 </head>
 <body>
     <div id="welcome-screen">
@@ -55,8 +55,36 @@
     <div class="final-overlay hidden">
         <div class="box">
             <h2>You win!</h2>
-            <p>This is the content inside the box.</p>
-            <button id="close-button">Close</button>
+            <div class="stats">
+                <div class="time">
+                    <div>
+                        Time:
+                    </div>
+                    <div id="overlayTime">
+                        00:00
+                    </div>
+                </div>
+                <div class="swaps">
+                    <div>
+                        Swaps:
+                    </div>
+                    <div id="overlaySwaps">
+                        0
+                    </div>
+                </div>
+            </div>
+            <div class="button-div">
+                <button id="shareButton" class="button"><i class="bi bi-share"></i> Share</button>
+            </div>
+            <div class="button-div">
+                <button id="viewButton" class="button"><i class="bi bi-eye"></i> View completed puzzle</button>
+            </div>
+            <div class="button-div">
+                <button id="restartButton" class="button"><i class="bi bi-arrow-clockwise"></i> Play again with the same settings</button>
+            </div>
+            <div class="button-div">
+                <button id="viewButton" class="button"><i class="bi bi-house-door"></i> Return to Mode Select</button>
+            </div>
         </div>
     </div>
 
