@@ -84,15 +84,23 @@ createButton.addEventListener('click', async () => {
     swapCounter.innerHTML = "Swaps: " + swaps;
     generateGrid();
     welcomeScreen.classList.add('fade-out');
-    await sleep(600);
+    await sleep(500);
     welcomeScreen.style.display = 'none';
+    welcomeScreen.classList.remove('fade-out');
     while(!puzzleReady){};
     gameScreen.classList.add('fade-in');
     gameScreen.style.display = '';
-    await sleep(600);
-    await sleep(400);
+    await sleep(500);
+    gameScreen.classList.remove('fade-in');
+    await sleep(500);
     transitionTiles(insertTilesRandom);
 })
+
+const viewPuzzleButton = document.getElementById("viewButton");
+viewPuzzleButton.addEventListener('click', () => {
+    finalOverlay.classList.add('hidden');
+})
+
 
 // Generate button should create a new fully randomized grid
 const generateButton = document.getElementById('generate');
@@ -118,6 +126,7 @@ generateButton.addEventListener('click', async () => {
 // Solve button should recreate the current grid without randomization
 const solutionButton = document.getElementById('solution');
 solutionButton.addEventListener('click', () => {
+    console.log("blub");
     if(!cheaterMode.checked) {
         puzzleSolved = true;
         timerRunning = false;

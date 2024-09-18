@@ -62,7 +62,7 @@ body {
     border-radius: 17px;
 }
 .fade-in {
-    animation: fadeInAnimation ease .6s;
+    animation: fadeInAnimation ease .5s;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
 }
@@ -75,7 +75,7 @@ body {
     }
 }
 .fade-out {
-    animation: fadeOutAnimation ease .6s;
+    animation: fadeOutAnimation ease .5s;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
 }
