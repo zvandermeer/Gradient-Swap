@@ -400,7 +400,7 @@ function chooseFixedTiles(rows, columns) {
             },
             2: () => {
                 for (let i = 1; i < columns - 1; i++) {
-                    fixedTileNumList.push(rows * (columns - 1) + i); // Bottom
+                    fixedTileNumList.push(columns * (rows - 1) + i); // Bottom
                 }
             },
             3: () => {
