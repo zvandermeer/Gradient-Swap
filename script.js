@@ -49,14 +49,14 @@ widthPlusButton.addEventListener('click', () => {
     if(width < 20) {
         widthLabel.innerHTML = width += 1;
     }
-})
+});
 const widthMinusButton = document.getElementById('widthMinusButton');
 widthMinusButton.addEventListener('click', () => {
     let width = parseInt(widthLabel.innerHTML);
     if(width > 3) {
         widthLabel.innerHTML = width -= 1;
     }
-})
+});
 
 const heightLabel = document.getElementById('heightLabel');
 const heightPlusButton = document.getElementById('heightPlusButton');
@@ -65,14 +65,14 @@ heightPlusButton.addEventListener('click', () => {
     if(height < 20) {
         heightLabel.innerHTML = height += 1;
     }
-})
+});
 const heightMinusButton = document.getElementById('heightMinusButton');
 heightMinusButton.addEventListener('click', () => {
     let height = parseInt(heightLabel.innerHTML);
     if(height > 3) {
         heightLabel.innerHTML = height -= 1;
     }
-})
+});
 
 const createButton = document.getElementById("gridCreateButton");
 createButton.addEventListener('click', async () => {
@@ -94,13 +94,21 @@ createButton.addEventListener('click', async () => {
     gameScreen.classList.remove('fade-in');
     await sleep(500);
     transitionTiles(insertTilesRandom);
-})
+});
 
 const viewPuzzleButton = document.getElementById("viewButton");
 viewPuzzleButton.addEventListener('click', () => {
     finalOverlay.classList.add('hidden');
-})
+});
 
+const shareButton = document.getElementById("shareButton");
+shareButton.addEventListener('click', async () => {
+    const shareData = {
+        text: `Gradient Game (${widthLabel.innerHTML}x${heightLabel.innerHTML})\nFinished in: ${timer.innerHTML}\nTotal swaps: ${swaps}\nPlay: https://gradient.starlightt.xyz`,
+    };
+
+    await navigator.share(shareData);
+});
 
 // Generate button should create a new fully randomized grid
 const generateButton = document.getElementById('generate');
@@ -126,7 +134,6 @@ generateButton.addEventListener('click', async () => {
 // Solve button should recreate the current grid without randomization
 const solutionButton = document.getElementById('solution');
 solutionButton.addEventListener('click', () => {
-    console.log("blub");
     if(!cheaterMode.checked) {
         puzzleSolved = true;
         timerRunning = false;
@@ -329,10 +336,7 @@ async function stopDrag(touch) {
                     jsConfetti.addConfetti();
                     await sleep(1800);
 
-                    let minutes = Math.floor(timerSeconds/60);
-                    let seconds = timerSeconds%60;
-
-                    overlayTime.innerHTML = minutes + ":" + seconds.toString().padStart(2, '0');
+                    overlayTime.innerHTML = timer.innerHTML;
 
                     overlaySwaps.innerHTML = swaps;
                     finalOverlay.classList.remove('hidden');
