@@ -6,6 +6,8 @@
     <title>Gradient Swap!</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="/manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
+    <meta name="theme-color" content="#fff9e7">
 </head>
 <body>
     <div id="controls">
@@ -23,7 +25,14 @@
     
     <div id="grid"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
     <script src="script.js"></script>
+    <script>
+        if('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js')
+            .then(function() {
+                  console.log('Service Worker Registered');
+            });
+        }
+    </script>
 </body>
 </html>
