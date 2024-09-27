@@ -137,6 +137,31 @@ regenerateButton.addEventListener('click', async () => {
     transitionTiles(insertTilesRandom);
 });
 
+const homeButton = document.getElementById('homeButton');
+homeButton.addEventListener('click', async () => {
+    puzzleSolved = false;
+    timerRunning = false;
+    gameScreen.classList.add('fade-out');
+    finalOverlay.classList.add('hidden');
+    await sleep(500);
+    gameScreen.style.display = 'none';
+    gameScreen.classList.remove('fade-out');
+    timer.innerHTML = "0:00";
+    timerSeconds = 0;
+    swaps = 0;
+    swapCounter.innerHTML = "Swaps: " + swaps;
+    grid.innerHTML = "";
+    grid.style = "";
+    fixedTileNumList = [];
+    fixedTileList = [];
+    randomTileList = [];
+    fullTileList = [];
+    welcomeScreen.classList.add('fade-in');
+    welcomeScreen.style.display = '';
+    await sleep(500);
+    welcomeScreen.classList.remove('fade-in');
+});
+
 // Generate button should create a new fully randomized grid
 const generateButton = document.getElementById('generate');
 generateButton.addEventListener('click', async () => {
