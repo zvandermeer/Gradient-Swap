@@ -110,6 +110,33 @@ shareButton.addEventListener('click', async () => {
     await navigator.share(shareData);
 });
 
+const regenerateButton = document.getElementById('regenerateButton');
+regenerateButton.addEventListener('click', async () => {
+    puzzleSolved = false;
+    timerRunning = false;
+    gameScreen.classList.add('fade-out');
+    finalOverlay.classList.add('hidden');
+    await sleep(500);
+    timer.innerHTML = "0:00";
+    timerSeconds = 0;
+    swaps = 0;
+    swapCounter.innerHTML = "Swaps: " + swaps;
+    grid.innerHTML = "";
+    grid.style = "";
+    fixedTileNumList = [];
+    fixedTileList = [];
+    randomTileList = [];
+    fullTileList = [];
+    generateGrid();
+    while(!puzzleReady){};
+    gameScreen.classList.remove('fade-out');
+    gameScreen.classList.add('fade-in');
+    await sleep(500);
+    gameScreen.classList.remove('fade-in');
+    await sleep(500);
+    transitionTiles(insertTilesRandom);
+});
+
 // Generate button should create a new fully randomized grid
 const generateButton = document.getElementById('generate');
 generateButton.addEventListener('click', async () => {
@@ -714,10 +741,13 @@ function insertTilesRandom() {
 
 function insertTilesOrdered() {
     // Clear existing grid
-    grid.innerHTML = '';
+    grid.innerHTML = '';    
+
+    console.log(grid.innerHTML);
 
     for (let i = 0; i < fullTileList.length; i++) {
         grid.appendChild(fullTileList[i]);
+        console.log(grid.innerHTML);
     }
 }
 
