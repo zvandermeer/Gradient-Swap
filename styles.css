@@ -166,18 +166,15 @@ body {
     width: 300px;
 }
 
-.box h2 {
-    margin-bottom: 30px;
-}
-
 .stats {
+    padding-top: 10px;
     display: flex;
     justify-content: space-between; /* Distribute space between the two divs */
     gap: 20px; /* Space between the two divs */
     padding-bottom: 10px;
 }
 
-.stats > div{
+.stats > div {
     flex: 1; /* Allow each div to take equal space */
     padding: 10px;
     background: #f0f0f0;
@@ -210,4 +207,11 @@ body {
 
 .final-dimension-adjust div {
     flex: 1;
+}
+
+.final-dimension-adjust > div > button {
+    width: 35%;
+    height: 43px;
+    border-radius: 17px;
+    font-size: 20px;
 }
