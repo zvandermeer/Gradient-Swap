@@ -74,6 +74,38 @@ heightMinusButton.addEventListener('click', () => {
     }
 });
 
+const finalWidthLabel = document.getElementById('finalWidthLabel');
+const finalWidthPlusButton = document.getElementById('finalWidthPlusButton');
+finalWidthPlusButton.addEventListener('click', () => {
+    let width = parseInt(finalWidthLabel.innerHTML);
+    if(width < 20) {
+        finalWidthLabel.innerHTML = width += 1;
+    }
+});
+const finalWidthMinusButton = document.getElementById('finalWidthMinusButton');
+finalWidthMinusButton.addEventListener('click', () => {
+    let width = parseInt(finalWidthLabel.innerHTML);
+    if(width > 3) {
+        finalWidthLabel.innerHTML = width -= 1;
+    }
+});
+
+const finalHeightLabel = document.getElementById('finalHeightLabel');
+const finalHeightPlusButton = document.getElementById('finalHeightPlusButton');
+finalHeightPlusButton.addEventListener('click', () => {
+    let height = parseInt(finalHeightLabel.innerHTML);
+    if(height < 20) {
+        finalHeightLabel.innerHTML = height += 1;
+    }
+});
+const finalHeightMinusButton = document.getElementById('finalHeightMinusButton');
+finalHeightMinusButton.addEventListener('click', () => {
+    let height = parseInt(finalHeightLabel.innerHTML);
+    if(height > 3) {
+        finalHeightLabel.innerHTML = height -= 1;
+    }
+});
+
 const createButton = document.getElementById("gridCreateButton");
 createButton.addEventListener('click', async () => {
     puzzleSolved = false;
@@ -82,7 +114,7 @@ createButton.addEventListener('click', async () => {
     timerSeconds = 0;
     swaps = 0;
     swapCounter.innerHTML = "Swaps: " + swaps;
-    generateGrid();
+    generateGrid(parseInt(heightLabel.innerHTML), parseInt(widthLabel.innerHTML));
     welcomeScreen.classList.add('fade-out');
     await sleep(500);
     welcomeScreen.style.display = 'none';
@@ -127,7 +159,7 @@ regenerateButton.addEventListener('click', async () => {
     fixedTileList = [];
     randomTileList = [];
     fullTileList = [];
-    generateGrid();
+    generateGrid(parseInt(finalHeightLabel.innerHTML), parseInt(finalWidthLabel.innerHTML));
     while(!puzzleReady){};
     gameScreen.classList.remove('fade-out');
     gameScreen.classList.add('fade-in');
@@ -160,27 +192,6 @@ homeButton.addEventListener('click', async () => {
     welcomeScreen.style.display = '';
     await sleep(500);
     welcomeScreen.classList.remove('fade-in');
-});
-
-// Generate button should create a new fully randomized grid
-const generateButton = document.getElementById('generate');
-generateButton.addEventListener('click', async () => {
-    puzzleSolved = false;
-    timerRunning = false;
-    timer.innerHTML = "0:00";
-    timerSeconds = 0;
-    swaps = 0;
-    swapCounter.innerHTML = "Swaps: " + swaps;
-    generateGrid();
-    welcomeScreen.classList.add('fade-out');
-    await sleep(600);
-    welcomeScreen.style.display = 'none';
-    while(!puzzleReady){};
-    gameScreen.classList.add('fade-in');
-    gameScreen.style.display = '';
-    await sleep(600);
-    await sleep(400);
-    transitionTiles(insertTilesRandom);
 });
 
 // Solve button should recreate the current grid without randomization
@@ -679,10 +690,8 @@ function chooseFixedTiles(rows, columns) {
 }
 
 // Generate a new tile grid
-function generateGrid() {
+function generateGrid(rows, columns) {
     puzzleReady = false;
-    const rows = parseInt(heightLabel.innerHTML);
-    const columns = parseInt(widthLabel.innerHTML);
 
     randomizeCornerColors();
 

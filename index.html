@@ -38,11 +38,6 @@
 
     <div id="game-screen" style="display: none;">
         <div id="controls">
-            <label for="rows">Rows:</label>
-            <input type="number" id="rows" value="6" min="3" max="20">
-            <label for="columns">Columns:</label>
-            <input type="number" id="columns" value="6" min="3" max="20">
-            <button id="generate">Generate Grid</button>
             <button id="solution">Show Solution?</button>
             <span id="swaps">Swaps: 0</span>
             <span id="timer">0:00</span>
@@ -52,7 +47,7 @@
         <div id="grid"></div>
     </div>
 
-    <div class="final-overlay">
+    <div class="final-overlay hidden">
         <div class="box">
             <h2>You win!</h2>
             <div class="stats">
@@ -76,15 +71,15 @@
             <div class="final-dimension-adjust">
                 <div style="padding-bottom: 5px;">
                     <p>Width</p>
-                    <button class="button"><i class="bi bi-plus"></i></button>
-                    <p>10</p>
-                    <button class="button"><i class="bi-dash"></i></button>
+                    <button id="finalWidthPlusButton" class="button"><i class="bi bi-plus"></i></button>
+                    <p id="finalWidthLabel">10</p>
+                    <button id="finalWidthMinusButton" class="button"><i class="bi-dash"></i></button>
                 </div>
                 <div style="padding-bottom: 5px;">
                     <p>Height</p>
-                    <button class="button"><i class="bi bi-plus"></i></button>
-                    <p>10</p>
-                    <button class="button"><i class="bi-dash"></i></button>
+                    <button id="finalHeightPlusButton" class="button"><i class="bi bi-plus"></i></button>
+                    <p id="finalHeightLabel">10</p>
+                    <button id="finalHeightMinusButton" class="button"><i class="bi-dash"></i></button>
                 </div>
             </div>
             <div class="button-div">
