@@ -766,13 +766,10 @@ function insertTilesRandom() {
 
 function insertTilesOrdered() {
     // Clear existing grid
-    grid.innerHTML = '';    
-
-    console.log(grid.innerHTML);
+    grid.innerHTML = '';
 
     for (let i = 0; i < fullTileList.length; i++) {
         grid.appendChild(fullTileList[i]);
-        console.log(grid.innerHTML);
     }
 }
 

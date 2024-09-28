@@ -184,6 +184,12 @@ body {
     border-radius: 8px;
 }
 
+.button-div {
+    display: flex;
+    justify-content: space-between; /* Distribute space between the two divs */
+    gap: 10px; /* Space between the two divs */
+}
+
 .final-overlay .button-div {
     padding-top: 20px;
 }
@@ -191,6 +197,17 @@ body {
 .button-div button {
     font-size: 20px;
     height: 60px;
-    width: 90%;
+    /* width: 90%; */
     border-radius: 17px;
+    flex: 1;
+}
+
+.final-dimension-adjust {
+    display: flex;
+    justify-content: space-between; /* Distribute space between the two divs */
+    gap: 10px; /* Space between the two divs */
+}
+
+.final-dimension-adjust div {
+    flex: 1;
 }
