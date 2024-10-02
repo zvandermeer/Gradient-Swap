@@ -120,11 +120,13 @@ body {
 
 #header-stats {
     flex-grow: 1;
+    position: relative;
 }
 
 #header-stats div {
+    position: absolute;
+    left: 60%;
     font-size: 20px;
-    float: right;
     transform: translateY(50%);
 }
 
@@ -180,7 +182,7 @@ body {
     cursor: pointer;
 }
 
-.final-overlay {
+.overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -195,7 +197,7 @@ body {
     z-index: 1000; /* Make sure overlay is above everything else */
 }
 
-.final-overlay.hidden {
+.overlay.hidden {
     opacity: 0;
     pointer-events: none; /* Prevent interaction when hidden */
 }
@@ -230,7 +232,7 @@ body {
     gap: 10px; /* Space between the two divs */
 }
 
-.final-overlay .button-div {
+.overlay .button-div {
     padding-top: 20px;
 }
 

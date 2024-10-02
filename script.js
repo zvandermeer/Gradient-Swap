@@ -17,6 +17,8 @@ let swaps = 0;
 let timerRunning = false;
 let timerSeconds = 0;
 
+let gamePaused = false;
+
 let tileToBeStopped = false;
 
 const colorSimilarityThreshold = 25;
@@ -39,9 +41,12 @@ const gameScreen = document.getElementById('game-screen');
 const grid = document.getElementById('grid');
 const swapCounter = document.getElementById('swaps');
 const timer = document.getElementById('timer');
-const finalOverlay = document.querySelector('.final-overlay');
+const finalOverlay = document.getElementById('final-overlay');
 const overlayTime = document.getElementById('overlayTime');
 const overlaySwaps = document.getElementById('overlaySwaps');
+const pauseScreen = document.getElementById('pause-menu');
+const pauseTime = document.getElementById('pauseTime');
+const pauseSwaps = document.getElementById('pauseSwaps');
 
 const widthLabel = document.getElementById('widthLabel');
 const heightLabel = document.getElementById('heightLabel');
@@ -222,6 +227,25 @@ quickRegenerateButton.addEventListener('click', async () => {
     transitionTiles(insertTilesRandom);
 });
 
+const menuButton = document.getElementById('header-menu');
+menuButton.addEventListener('click', () => {
+    gamePaused = true;
+
+    pauseTime.innerHTML = timer.innerHTML;
+    pauseSwaps.innerHTML = swaps;
+
+    pauseScreen.classList.remove('hidden');
+});
+
+const pauseResumeButton = document.getElementById('pauseResumeButton');
+pauseResumeButton.addEventListener('click', async () => {
+    pauseScreen.classList.add('hidden');
+
+    await sleep(500);
+    
+    gamePaused = false;
+});
+
 function hexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
@@ -302,18 +326,19 @@ document.body.addEventListener('mousedown', (e) => {startDrag(e, false);});
 // Starts dragging the selected tile
 function startDrag(e, touch) {
     // Ensures the tile should be dragged
-    if (e.target.classList.contains('tile') && e.target.classList.contains('draggable') && !puzzleSolved && !draggedTile) {
+    if (e.target.classList.contains('tile') && e.target.classList.contains('draggable') && !puzzleSolved && !draggedTile && !gamePaused) {
         if(!timerRunning) {
             timerRunning = true;
             var x = setInterval(function() {
                 if (timerRunning) {
-                    timerSeconds++;
+                    if (!gamePaused) {
+                        timerSeconds++;
 
-                    let minutes = Math.floor(timerSeconds/60);
-                    let seconds = timerSeconds%60;
+                        let minutes = Math.floor(timerSeconds/60);
+                        let seconds = timerSeconds%60;
 
-                    timer.innerHTML = minutes + ":" + seconds.toString().padStart(2, '0');
-
+                        timer.innerHTML = minutes + ":" + seconds.toString().padStart(2, '0');
+                    }
                 } else {
                     clearInterval(x);
                 }
