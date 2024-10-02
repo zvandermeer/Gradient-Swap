@@ -302,7 +302,7 @@ function startDrag(e, touch) {
         // Inserts placeholder tile where tile was dragged from
         placeholderTile = document.createElement('div');
         placeholderTile.classList.add('tile', 'placeholder');
-        placeholderTile.style.backgroundColor = "white";
+        placeholderTile.style.backgroundColor = "#fff9e7";
         grid.insertBefore(placeholderTile, draggedTile.nextSibling)
 
         // Adds listener to move the tile with the cursor
@@ -784,11 +784,17 @@ function transitionTiles(reorderTiles) {
         if(!gridChildren[i].classList.contains('fixed')) {
             gridChildren[i].classList.remove('draggable');
 
+            gridChildren[i].classList.add("scaling");
+
             gridChildren[i].style.transform = "scale(0)";
 
             setTimeout(() => {
                 gridChildren[i].style.transform = "scale(1)";
             }, 800);
+
+            setTimeout(() => {
+                gridChildren[i].classList.remove("scaling");
+            }, 1700);
 
             if(!puzzleSolved) {
                 setTimeout(() => {
