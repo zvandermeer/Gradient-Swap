@@ -715,7 +715,7 @@ function chooseFixedTiles(rows, columns) {
         },
         // Every other square [1]
         (fixedTileNumList, rows, columns) => {
-            if ((columns*rows) & 1) {
+            if (((columns*rows) & 1) && !(columns == 3 && rows == 3)) {
                 for(let i = 2; i < ((columns*rows) - 1); i+=2) {
                     if(!fixedTileNumList.includes(i)) {
                         fixedTileNumList.push(i);
@@ -746,7 +746,7 @@ function chooseFixedTiles(rows, columns) {
         },
         // Cross [5]
         (fixedTileNumList, rows, columns) => {
-            if (rows < 4 && columns < 4) {
+            if (rows > 4 && columns > 4) {
                 genFullVertical(fixedTileNumList, rows, columns);
 
                 let centerTiles = getCenterTiles(rows, columns);
