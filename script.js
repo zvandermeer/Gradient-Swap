@@ -246,6 +246,48 @@ pauseResumeButton.addEventListener('click', async () => {
     gamePaused = false;
 });
 
+const pauseSolutionButton = document.getElementById('pauseSolutionButton');
+pauseSolutionButton.addEventListener('click', async () => {
+    if(!devMode) {
+        puzzleSolved = true;
+        timerRunning = false;
+    }
+
+    pauseScreen.classList.add('hidden');
+
+    await sleep(500);
+    gamePaused = false;
+
+    transitionTiles(insertTilesOrdered);
+});
+
+const pauseHomeButton = document.getElementById('pauseHomeButton');
+pauseHomeButton.addEventListener('click', async () => {
+    puzzleSolved = false;
+    timerRunning = false;
+    gamePaused = false;
+    gameScreen.classList.add('fade-out');
+    pauseScreen.classList.add('hidden');
+    await sleep(500);
+    gameScreen.style.display = 'none';
+    gameScreen.classList.remove('fade-out');
+    timer.innerHTML = "0:00";
+    timerSeconds = 0;
+    swaps = 0;
+    swapCounter.innerHTML = "Swaps: " + swaps;
+    grid.innerHTML = "";
+    grid.style = "";
+    fixedTileNumList = [];
+    fixedTileList = [];
+    randomTileList = [];
+    fullTileList = [];
+    welcomeScreen.classList.add('fade-in');
+    welcomeScreen.style.display = '';
+    await sleep(500);
+    welcomeScreen.classList.remove('fade-in');
+});
+
+
 function hexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
