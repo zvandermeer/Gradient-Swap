@@ -22,15 +22,15 @@
         <div class="dimension-button-container">
             <div>Width</div>
             <div class="dimension-button">
-                <button id="widthPlusButton" class="button"><i class="bi-plus"></i></button>
+                <button id="widthPlusButton" class="button"><i class="bi bi-plus"></i></button>
                 <p id="widthLabel">6</p>
-                <button id="widthMinusButton" class="button"><i class="bi-dash"></i></button>
+                <button id="widthMinusButton" class="button"><i class="bi bi-dash"></i></button>
             </div>
             <div>Height</div>
             <div class="dimension-button">
-                <button id="heightPlusButton" class="button"><i class="bi-plus"></i></button>
+                <button id="heightPlusButton" class="button"><i class="bi bi-plus"></i></button>
                 <p id="heightLabel">6</p>
-                <button id="heightMinusButton" class="button"><i class="bi-dash"></i></button>
+                <button id="heightMinusButton" class="button"><i class="bi bi-dash"></i></button>
             </div>
         </div>
         <button id="gridCreateButton", class="button create-button">Generate grid!</button>
@@ -38,10 +38,16 @@
 
     <div id="game-screen" style="display: none;">
         <div id="controls">
-            <button id="solution">Show Solution?</button>
-            <span id="swaps">Swaps: 0</span>
-            <span id="timer">0:00</span>
-            <input type="checkbox" id="cheater">
+            <div id="header-buttons">
+                <button id="header-menu" class="button"><i class="bi bi-list"></i></i></button>
+                <button id="header-restart" class="button"><i class="bi bi-arrow-clockwise"></i></button>
+            </div>
+            <div id="header-stats">
+                <div>
+                    <span id="swaps">Swaps: 0</span>
+                    <span id="timer">0:00</span>
+                </div>
+            </div>
         </div>
         
         <div id="grid"></div>
@@ -72,14 +78,14 @@
                 <div style="padding-bottom: 5px;">
                     <p>Width</p>
                     <button id="finalWidthPlusButton" class="button"><i class="bi bi-plus"></i></button>
-                    <p id="finalWidthLabel">10</p>
-                    <button id="finalWidthMinusButton" class="button"><i class="bi-dash"></i></button>
+                    <p id="finalWidthLabel">6</p>
+                    <button id="finalWidthMinusButton" class="button"><i class="bi bi-dash"></i></button>
                 </div>
                 <div style="padding-bottom: 5px;">
                     <p>Height</p>
                     <button id="finalHeightPlusButton" class="button"><i class="bi bi-plus"></i></button>
-                    <p id="finalHeightLabel">10</p>
-                    <button id="finalHeightMinusButton" class="button"><i class="bi-dash"></i></button>
+                    <p id="finalHeightLabel">6</p>
+                    <button id="finalHeightMinusButton" class="button"><i class="bi bi-dash"></i></button>
                 </div>
             </div>
             <div class="button-div">

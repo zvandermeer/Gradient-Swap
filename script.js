@@ -27,6 +27,8 @@ var randomTileList = [];
 var fixedTileList = [];
 var fullTileList = [];
 
+var devMode = false;
+
 // Add listeners to report constant cursor position
 document.addEventListener('touchmove', onCursorMove);
 document.addEventListener('mousemove', onCursorMove);
@@ -37,7 +39,6 @@ const gameScreen = document.getElementById('game-screen');
 const grid = document.getElementById('grid');
 const swapCounter = document.getElementById('swaps');
 const timer = document.getElementById('timer');
-const cheaterMode = document.getElementById('cheater');
 const finalOverlay = document.querySelector('.final-overlay');
 const overlayTime = document.getElementById('overlayTime');
 const overlaySwaps = document.getElementById('overlaySwaps');
@@ -123,7 +124,15 @@ createButton.addEventListener('click', async () => {
 
 const viewPuzzleButton = document.getElementById("viewButton");
 viewPuzzleButton.addEventListener('click', () => {
-    finalOverlay.classList.add('hidden');
+    if(puzzleSolved) {
+        finalOverlay.classList.add('hidden');
+    } else {
+        if(devMode) {
+            puzzleSolved = true;
+            timerRunning = false;
+        }
+        transitionTiles(insertTilesOrdered);
+    }
 });
 
 const shareButton = document.getElementById("shareButton");
@@ -185,16 +194,6 @@ homeButton.addEventListener('click', async () => {
     welcomeScreen.style.display = '';
     await sleep(500);
     welcomeScreen.classList.remove('fade-in');
-});
-
-// Solve button should recreate the current grid without randomization
-const solutionButton = document.getElementById('solution');
-solutionButton.addEventListener('click', () => {
-    if(!cheaterMode.checked) {
-        puzzleSolved = true;
-        timerRunning = false;
-    }
-    transitionTiles(insertTilesOrdered);
 });
 
 function hexToRgb(hex) {
@@ -700,7 +699,7 @@ function generateGrid() {
     const gridPos = grid.getBoundingClientRect();
 
     const availableScreenWidth = window.innerWidth - 40;
-    const availableScreenHeight = window.innerHeight - (gridPos.top + 20);
+    const availableScreenHeight = window.innerHeight - 120;
 
     const tileWidth = clamp((availableScreenWidth / columns), 0, 100);
     const tileHeight = clamp((availableScreenHeight / rows), 0, 100);
@@ -720,7 +719,6 @@ function generateGrid() {
             tile.style.backgroundColor = colorGrid[i][j];
             tile.style.width = tileWidth + 'px';
             tile.style.height = tileHeight + 'px';
-            tile.draggable = false;
             tile.setAttribute('tile-num', counter);
 
             // If tile is fixed, add additional properties
