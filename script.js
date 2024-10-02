@@ -43,68 +43,61 @@ const overlayTime = document.getElementById('overlayTime');
 const overlaySwaps = document.getElementById('overlaySwaps');
 
 const widthLabel = document.getElementById('widthLabel');
-const widthPlusButton = document.getElementById('widthPlusButton');
-widthPlusButton.addEventListener('click', () => {
+const heightLabel = document.getElementById('heightLabel');
+const finalWidthLabel = document.getElementById('finalWidthLabel');
+const finalHeightLabel = document.getElementById('finalHeightLabel');
+
+function addWidth() {
     let width = parseInt(widthLabel.innerHTML);
     if(width < 20) {
         widthLabel.innerHTML = width += 1;
+        finalWidthLabel.innerHTML = widthLabel.innerHTML;
     }
-});
-const widthMinusButton = document.getElementById('widthMinusButton');
-widthMinusButton.addEventListener('click', () => {
+}
+
+function subtractWidth() {
     let width = parseInt(widthLabel.innerHTML);
     if(width > 3) {
         widthLabel.innerHTML = width -= 1;
+        finalWidthLabel.innerHTML = widthLabel.innerHTML;
     }
-});
+}
 
-const heightLabel = document.getElementById('heightLabel');
-const heightPlusButton = document.getElementById('heightPlusButton');
-heightPlusButton.addEventListener('click', () => {
+function addHeight() {
     let height = parseInt(heightLabel.innerHTML);
     if(height < 20) {
         heightLabel.innerHTML = height += 1;
+        finalHeightLabel.innerHTML = heightLabel.innerHTML;
     }
-});
-const heightMinusButton = document.getElementById('heightMinusButton');
-heightMinusButton.addEventListener('click', () => {
+}
+
+function subtractHeight() {
     let height = parseInt(heightLabel.innerHTML);
     if(height > 3) {
         heightLabel.innerHTML = height -= 1;
+        finalHeightLabel.innerHTML = heightLabel.innerHTML;
     }
-});
+}
 
-const finalWidthLabel = document.getElementById('finalWidthLabel');
+const widthPlusButton = document.getElementById('widthPlusButton');
+widthPlusButton.addEventListener('click', addWidth);
+const widthMinusButton = document.getElementById('widthMinusButton');
+widthMinusButton.addEventListener('click', subtractWidth);
+
+const heightPlusButton = document.getElementById('heightPlusButton');
+heightPlusButton.addEventListener('click', addHeight);
+const heightMinusButton = document.getElementById('heightMinusButton');
+heightMinusButton.addEventListener('click', subtractHeight);
+
 const finalWidthPlusButton = document.getElementById('finalWidthPlusButton');
-finalWidthPlusButton.addEventListener('click', () => {
-    let width = parseInt(finalWidthLabel.innerHTML);
-    if(width < 20) {
-        finalWidthLabel.innerHTML = width += 1;
-    }
-});
+finalWidthPlusButton.addEventListener('click', addWidth);
 const finalWidthMinusButton = document.getElementById('finalWidthMinusButton');
-finalWidthMinusButton.addEventListener('click', () => {
-    let width = parseInt(finalWidthLabel.innerHTML);
-    if(width > 3) {
-        finalWidthLabel.innerHTML = width -= 1;
-    }
-});
+finalWidthMinusButton.addEventListener('click', subtractWidth);
 
-const finalHeightLabel = document.getElementById('finalHeightLabel');
 const finalHeightPlusButton = document.getElementById('finalHeightPlusButton');
-finalHeightPlusButton.addEventListener('click', () => {
-    let height = parseInt(finalHeightLabel.innerHTML);
-    if(height < 20) {
-        finalHeightLabel.innerHTML = height += 1;
-    }
-});
+finalHeightPlusButton.addEventListener('click', addHeight);
 const finalHeightMinusButton = document.getElementById('finalHeightMinusButton');
-finalHeightMinusButton.addEventListener('click', () => {
-    let height = parseInt(finalHeightLabel.innerHTML);
-    if(height > 3) {
-        finalHeightLabel.innerHTML = height -= 1;
-    }
-});
+finalHeightMinusButton.addEventListener('click', subtractHeight);
 
 const createButton = document.getElementById("gridCreateButton");
 createButton.addEventListener('click', async () => {
@@ -114,7 +107,7 @@ createButton.addEventListener('click', async () => {
     timerSeconds = 0;
     swaps = 0;
     swapCounter.innerHTML = "Swaps: " + swaps;
-    generateGrid(parseInt(heightLabel.innerHTML), parseInt(widthLabel.innerHTML));
+    generateGrid();
     welcomeScreen.classList.add('fade-out');
     await sleep(500);
     welcomeScreen.style.display = 'none';
@@ -159,7 +152,7 @@ regenerateButton.addEventListener('click', async () => {
     fixedTileList = [];
     randomTileList = [];
     fullTileList = [];
-    generateGrid(parseInt(finalHeightLabel.innerHTML), parseInt(finalWidthLabel.innerHTML));
+    generateGrid();
     while(!puzzleReady){};
     gameScreen.classList.remove('fade-out');
     gameScreen.classList.add('fade-in');
@@ -690,8 +683,11 @@ function chooseFixedTiles(rows, columns) {
 }
 
 // Generate a new tile grid
-function generateGrid(rows, columns) {
+function generateGrid() {
     puzzleReady = false;
+
+    const columns = parseInt(widthLabel.innerHTML);
+    const rows = parseInt(heightLabel.innerHTML);
 
     randomizeCornerColors();
 
