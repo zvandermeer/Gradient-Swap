@@ -196,6 +196,32 @@ homeButton.addEventListener('click', async () => {
     welcomeScreen.classList.remove('fade-in');
 });
 
+const quickRegenerateButton = document.getElementById('header-restart');
+quickRegenerateButton.addEventListener('click', async () => {
+    puzzleSolved = false;
+    timerRunning = false;
+    timer.innerHTML = "0:00";
+    timerSeconds = 0;
+    swaps = 0;
+    swapCounter.innerHTML = "Swaps: " + swaps;
+    grid.classList.add('fade-out');
+    await sleep(500);
+    grid.innerHTML = "";
+    grid.style = "";
+    fixedTileNumList = [];
+    fixedTileList = [];
+    randomTileList = [];
+    fullTileList = [];
+    generateGrid();
+    while(!puzzleReady){};
+    grid.classList.remove('fade-out');
+    grid.classList.add('fade-in');
+    await sleep(500);
+    grid.classList.remove('fade-in');
+    await sleep(500);
+    transitionTiles(insertTilesRandom);
+});
+
 function hexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
@@ -695,8 +721,6 @@ function generateGrid() {
 
     // Create fixed tile pattern, setting corners as fixed
     fixedTileNumList = chooseFixedTiles(rows, columns);
-
-    const gridPos = grid.getBoundingClientRect();
 
     const availableScreenWidth = window.innerWidth - 40;
     const availableScreenHeight = window.innerHeight - 120;
