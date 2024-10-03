@@ -746,7 +746,7 @@ function chooseFixedTiles(rows, columns) {
         },
         // Cross [5]
         (fixedTileNumList, rows, columns) => {
-            if (rows > 4 && columns > 4) {
+            if (rows > 6 && columns > 6) {
                 genFullVertical(fixedTileNumList, rows, columns);
 
                 let centerTiles = getCenterTiles(rows, columns);
