@@ -3,7 +3,6 @@ const jsConfetti = new JSConfetti()
 let draggedTile = null;
 let placeholderTile = null;
 
-let randomize = true;
 let puzzleSolved = false;
 
 const cornerColors = [];
@@ -18,24 +17,98 @@ let swaps = 0;
 let timerRunning = false;
 let timerSeconds = 0;
 
+let gamePaused = false;
+
 let tileToBeStopped = false;
 
 const colorSimilarityThreshold = 25;
+
+let puzzleReady = false;
+
+var randomTileList = [];
+var fixedTileList = [];
+var fullTileList = [];
+
+var devMode = false;
 
 // Add listeners to report constant cursor position
 document.addEventListener('touchmove', onCursorMove);
 document.addEventListener('mousemove', onCursorMove);
 
 // Pull existing elements from HTML
+const welcomeScreen = document.getElementById('welcome-screen');
+const gameScreen = document.getElementById('game-screen');
 const grid = document.getElementById('grid');
 const swapCounter = document.getElementById('swaps');
 const timer = document.getElementById('timer');
-const cheaterMode = document.getElementById('cheater');
+const finalOverlay = document.getElementById('final-overlay');
+const overlayTime = document.getElementById('overlayTime');
+const overlaySwaps = document.getElementById('overlaySwaps');
+const pauseScreen = document.getElementById('pause-menu');
+const pauseTime = document.getElementById('pauseTime');
+const pauseSwaps = document.getElementById('pauseSwaps');
 
-// Generate button should create a new fully randomized grid
-const generateButton = document.getElementById('generate');
-generateButton.addEventListener('click', () => {
-    randomize = true;
+const widthLabel = document.getElementById('widthLabel');
+const heightLabel = document.getElementById('heightLabel');
+const finalWidthLabel = document.getElementById('finalWidthLabel');
+const finalHeightLabel = document.getElementById('finalHeightLabel');
+
+const headerStatsContainer = document.querySelector('#header-stats div');
+
+function addWidth() {
+    let width = parseInt(widthLabel.innerHTML);
+    if(width < 20) {
+        widthLabel.innerHTML = width += 1;
+        finalWidthLabel.innerHTML = widthLabel.innerHTML;
+    }
+}
+
+function subtractWidth() {
+    let width = parseInt(widthLabel.innerHTML);
+    if(width > 3) {
+        widthLabel.innerHTML = width -= 1;
+        finalWidthLabel.innerHTML = widthLabel.innerHTML;
+    }
+}
+
+function addHeight() {
+    let height = parseInt(heightLabel.innerHTML);
+    if(height < 20) {
+        heightLabel.innerHTML = height += 1;
+        finalHeightLabel.innerHTML = heightLabel.innerHTML;
+    }
+}
+
+function subtractHeight() {
+    let height = parseInt(heightLabel.innerHTML);
+    if(height > 3) {
+        heightLabel.innerHTML = height -= 1;
+        finalHeightLabel.innerHTML = heightLabel.innerHTML;
+    }
+}
+
+const widthPlusButton = document.getElementById('widthPlusButton');
+widthPlusButton.addEventListener('click', addWidth);
+const widthMinusButton = document.getElementById('widthMinusButton');
+widthMinusButton.addEventListener('click', subtractWidth);
+
+const heightPlusButton = document.getElementById('heightPlusButton');
+heightPlusButton.addEventListener('click', addHeight);
+const heightMinusButton = document.getElementById('heightMinusButton');
+heightMinusButton.addEventListener('click', subtractHeight);
+
+const finalWidthPlusButton = document.getElementById('finalWidthPlusButton');
+finalWidthPlusButton.addEventListener('click', addWidth);
+const finalWidthMinusButton = document.getElementById('finalWidthMinusButton');
+finalWidthMinusButton.addEventListener('click', subtractWidth);
+
+const finalHeightPlusButton = document.getElementById('finalHeightPlusButton');
+finalHeightPlusButton.addEventListener('click', addHeight);
+const finalHeightMinusButton = document.getElementById('finalHeightMinusButton');
+finalHeightMinusButton.addEventListener('click', subtractHeight);
+
+const createButton = document.getElementById("gridCreateButton");
+createButton.addEventListener('click', async () => {
     puzzleSolved = false;
     timerRunning = false;
     timer.innerHTML = "0:00";
@@ -43,18 +116,175 @@ generateButton.addEventListener('click', () => {
     swaps = 0;
     swapCounter.innerHTML = "Swaps: " + swaps;
     generateGrid();
+    welcomeScreen.classList.add('fade-out');
+    await sleep(500);
+    welcomeScreen.style.display = 'none';
+    welcomeScreen.classList.remove('fade-out');
+    while(!puzzleReady){};
+    gameScreen.classList.add('fade-in');
+    gameScreen.style.display = '';
+    await sleep(500);
+    gameScreen.classList.remove('fade-in');
+    await sleep(500);
+    transitionTiles(insertTilesRandom);
 });
 
-// Solve button should recreate the current grid without randomization
-const solutionButton = document.getElementById('solution');
-solutionButton.addEventListener('click', () => {
-    randomize = false;
-    if(!cheaterMode.checked) {
+const viewPuzzleButton = document.getElementById("viewButton");
+viewPuzzleButton.addEventListener('click', () => {
+    finalOverlay.classList.add('hidden');
+});
+
+const shareButton = document.getElementById("shareButton");
+shareButton.addEventListener('click', async () => {
+    const shareData = {
+        text: `Gradient Game (${widthLabel.innerHTML}x${heightLabel.innerHTML})\nFinished in: ${timer.innerHTML}\nTotal swaps: ${swaps}\nPlay: https://gradient.starlightt.xyz`,
+    };
+
+    await navigator.share(shareData);
+});
+
+const regenerateButton = document.getElementById('regenerateButton');
+regenerateButton.addEventListener('click', async () => {
+    puzzleSolved = false;
+    timerRunning = false;
+    gameScreen.classList.add('fade-out');
+    finalOverlay.classList.add('hidden');
+    await sleep(500);
+    timer.innerHTML = "0:00";
+    timerSeconds = 0;
+    swaps = 0;
+    swapCounter.innerHTML = "Swaps: " + swaps;
+    grid.innerHTML = "";
+    grid.style = "";
+    fixedTileNumList = [];
+    fixedTileList = [];
+    randomTileList = [];
+    fullTileList = [];
+    generateGrid();
+    while(!puzzleReady){};
+    gameScreen.classList.remove('fade-out');
+    gameScreen.classList.add('fade-in');
+    await sleep(500);
+    gameScreen.classList.remove('fade-in');
+    await sleep(500);
+    transitionTiles(insertTilesRandom);
+});
+
+const homeButton = document.getElementById('homeButton');
+homeButton.addEventListener('click', async () => {
+    puzzleSolved = false;
+    timerRunning = false;
+    gameScreen.classList.add('fade-out');
+    finalOverlay.classList.add('hidden');
+    await sleep(500);
+    gameScreen.style.display = 'none';
+    gameScreen.classList.remove('fade-out');
+    timer.innerHTML = "0:00";
+    timerSeconds = 0;
+    swaps = 0;
+    swapCounter.innerHTML = "Swaps: " + swaps;
+    grid.innerHTML = "";
+    grid.style = "";
+    fixedTileNumList = [];
+    fixedTileList = [];
+    randomTileList = [];
+    fullTileList = [];
+    welcomeScreen.classList.add('fade-in');
+    welcomeScreen.style.display = '';
+    await sleep(500);
+    welcomeScreen.classList.remove('fade-in');
+});
+
+const quickRegenerateButton = document.getElementById('header-restart');
+quickRegenerateButton.addEventListener('click', async () => {
+    puzzleSolved = false;
+    timerRunning = false;
+    timer.innerHTML = "0:00";
+    timerSeconds = 0;
+    swaps = 0;
+    swapCounter.innerHTML = "Swaps: " + swaps;
+    grid.classList.add('fade-out');
+    await sleep(500);
+    grid.innerHTML = "";
+    grid.style = "";
+    fixedTileNumList = [];
+    fixedTileList = [];
+    randomTileList = [];
+    fullTileList = [];
+    generateGrid();
+    while(!puzzleReady){};
+    grid.classList.remove('fade-out');
+    grid.classList.add('fade-in');
+    await sleep(500);
+    grid.classList.remove('fade-in');
+    await sleep(500);
+    transitionTiles(insertTilesRandom);
+});
+
+const menuButton = document.getElementById('header-menu');
+menuButton.addEventListener('click', () => {
+    if(puzzleSolved) {
+        finalOverlay.classList.remove('hidden');
+    } else {
+        gamePaused = true;
+
+        pauseTime.innerHTML = timer.innerHTML;
+        pauseSwaps.innerHTML = swaps;
+
+        pauseScreen.classList.remove('hidden');
+    }
+});
+
+const pauseResumeButton = document.getElementById('pauseResumeButton');
+pauseResumeButton.addEventListener('click', async () => {
+    pauseScreen.classList.add('hidden');
+
+    await sleep(500);
+    
+    gamePaused = false;
+});
+
+const pauseSolutionButton = document.getElementById('pauseSolutionButton');
+pauseSolutionButton.addEventListener('click', async () => {
+    if(!devMode) {
         puzzleSolved = true;
         timerRunning = false;
     }
-    generateGrid();
+
+    pauseScreen.classList.add('hidden');
+
+    await sleep(500);
+    gamePaused = false;
+
+    transitionTiles(insertTilesOrdered);
 });
+
+const pauseHomeButton = document.getElementById('pauseHomeButton');
+pauseHomeButton.addEventListener('click', async () => {
+    puzzleSolved = false;
+    timerRunning = false;
+    gamePaused = false;
+    gameScreen.classList.add('fade-out');
+    pauseScreen.classList.add('hidden');
+    await sleep(500);
+    gameScreen.style.display = 'none';
+    gameScreen.classList.remove('fade-out');
+    timer.innerHTML = "0:00";
+    timerSeconds = 0;
+    swaps = 0;
+    swapCounter.innerHTML = "Swaps: " + swaps;
+    grid.innerHTML = "";
+    grid.style = "";
+    fixedTileNumList = [];
+    fixedTileList = [];
+    randomTileList = [];
+    fullTileList = [];
+    welcomeScreen.classList.add('fade-in');
+    welcomeScreen.style.display = '';
+    await sleep(500);
+    welcomeScreen.classList.remove('fade-in');
+});
+
 
 function hexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -136,18 +366,19 @@ document.body.addEventListener('mousedown', (e) => {startDrag(e, false);});
 // Starts dragging the selected tile
 function startDrag(e, touch) {
     // Ensures the tile should be dragged
-    if (e.target.classList.contains('tile') && !e.target.classList.contains('placeholder') && !e.target.classList.contains('fixed') && !puzzleSolved && !draggedTile) {
+    if (e.target.classList.contains('tile') && e.target.classList.contains('draggable') && !puzzleSolved && !draggedTile && !gamePaused) {
         if(!timerRunning) {
             timerRunning = true;
             var x = setInterval(function() {
                 if (timerRunning) {
-                    timerSeconds++;
+                    if (!gamePaused) {
+                        timerSeconds++;
 
-                    let minutes = Math.floor(timerSeconds/60);
-                    let seconds = timerSeconds%60;
+                        let minutes = Math.floor(timerSeconds/60);
+                        let seconds = timerSeconds%60;
 
-                    timer.innerHTML = minutes + ":" + seconds.toString().padStart(2, '0');
-
+                        timer.innerHTML = minutes + ":" + seconds.toString().padStart(2, '0');
+                    }
                 } else {
                     clearInterval(x);
                 }
@@ -164,7 +395,7 @@ function startDrag(e, touch) {
         // Inserts placeholder tile where tile was dragged from
         placeholderTile = document.createElement('div');
         placeholderTile.classList.add('tile', 'placeholder');
-        placeholderTile.style.backgroundColor = "white";
+        placeholderTile.style.backgroundColor = "#fff9e7";
         grid.insertBefore(placeholderTile, draggedTile.nextSibling)
 
         // Adds listener to move the tile with the cursor
@@ -189,10 +420,14 @@ async function stopDrag(touch) {
         tileToBeStopped = false;
         // Gets the nearest tile to swap with
         let element = document.elementsFromPoint(cursorX, cursorY)[0];
-        if(element.classList.contains('tile') && !element.classList.contains('placeholder') && !element.classList.contains('fixed')) {
+        if(element.classList.contains('tile') && element.classList.contains('draggable')) {
             swaps++;
 
             swapCounter.innerHTML = "Swaps: " + swaps;
+
+            if(window.innerWidth < 600) {
+                headerStatsContainer.style.width = swapCounter.innerHTML.length + 'ch'
+            }
 
             newTile = element;
 
@@ -251,8 +486,13 @@ async function stopDrag(touch) {
                 if(i === totalSquares) {
                     puzzleSolved = true;
                     timerRunning = false;
-                    console.log("You win!");
                     jsConfetti.addConfetti();
+                    await sleep(1800);
+
+                    overlayTime.innerHTML = timer.innerHTML;
+
+                    overlaySwaps.innerHTML = swaps;
+                    finalOverlay.classList.remove('hidden');
                 }
             }
 
@@ -480,7 +720,7 @@ function chooseFixedTiles(rows, columns) {
         },
         // Every other square [1]
         (fixedTileNumList, rows, columns) => {
-            if ((columns*rows) & 1) {
+            if (((columns*rows) & 1) && !(columns == 3 && rows == 3)) {
                 for(let i = 2; i < ((columns*rows) - 1); i+=2) {
                     if(!fixedTileNumList.includes(i)) {
                         fixedTileNumList.push(i);
@@ -511,7 +751,7 @@ function chooseFixedTiles(rows, columns) {
         },
         // Cross [5]
         (fixedTileNumList, rows, columns) => {
-            if (rows < 4 && columns < 4) {
+            if (rows > 6 && columns > 6) {
                 genFullVertical(fixedTileNumList, rows, columns);
 
                 let centerTiles = getCenterTiles(rows, columns);
@@ -541,32 +781,21 @@ function chooseFixedTiles(rows, columns) {
 
 // Generate a new tile grid
 function generateGrid() {
-    const rows = document.getElementById('rows').value;
-    const columns = document.getElementById('columns').value;
+    puzzleReady = false;
 
-    if(randomize) {
-        randomizeCornerColors();
-    }
+    const columns = parseInt(widthLabel.innerHTML);
+    const rows = parseInt(heightLabel.innerHTML);
+
+    randomizeCornerColors();
 
     // Generate gradient colors for grid
     let colorGrid = generateGradientGrid(cornerColors[0], cornerColors[1], cornerColors[2], cornerColors[3], columns, rows);
 
     // Create fixed tile pattern, setting corners as fixed
-    if(randomize) {
-        fixedTileNumList = chooseFixedTiles(rows, columns);
-    }
-
-    // Initialize lists of random and fixed tiles
-    var randomTileList = [];
-    var fixedTileList = [];
-
-    // Clear existing grid
-    grid.innerHTML = '';
-
-    const gridPos = grid.getBoundingClientRect();
+    fixedTileNumList = chooseFixedTiles(rows, columns);
 
     const availableScreenWidth = window.innerWidth - 40;
-    const availableScreenHeight = window.innerHeight - (gridPos.top + 20);
+    const availableScreenHeight = window.innerHeight - 120;
 
     const tileWidth = clamp((availableScreenWidth / columns), 0, 100);
     const tileHeight = clamp((availableScreenHeight / rows), 0, 100);
@@ -586,7 +815,6 @@ function generateGrid() {
             tile.style.backgroundColor = colorGrid[i][j];
             tile.style.width = tileWidth + 'px';
             tile.style.height = tileHeight + 'px';
-            tile.draggable = false;
             tile.setAttribute('tile-num', counter);
 
             // If tile is fixed, add additional properties
@@ -603,35 +831,74 @@ function generateGrid() {
                 tile.appendChild(centerDot);
             }
 
-            // If the tiles are being randomized, separate fixed and unfixed tiles
-            if(randomize) {
-                if(tile.classList.contains('fixed')) {
-                    fixedTileList.push(tile);
-                } else {
-                    randomTileList.push(tile);
-                }
+            fullTileList.push(tile);
+
+            // Separate fixed and unfixed tiles
+            if(tile.classList.contains('fixed')) {
+                fixedTileList.push(tile);
             } else {
-                // If not randomizing, insert the tiles in gradient (created) order
-                grid.appendChild(tile);
+                randomTileList.push(tile);
             }
             counter++;
         }
     }
 
-    if(randomize) {
-        // For each tile, if that tile should be fixed, insert the applicable tile. Otherwise grab a random tile
-        // from the remaining uninserted tiles
-        for (let i = 0; i < counter; i++) {
-            if (fixedTileNumList.includes(i)) {
-                grid.appendChild(fixedTileList[fixedTileNumList.indexOf(i)]);
-            } else {
-                let randomIndex = Math.floor(Math.random() * randomTileList.length);
-                grid.appendChild(randomTileList[randomIndex]);
-                randomTileList.splice(randomIndex, 1);
-            }
+    insertTilesOrdered();
+
+    puzzleReady = true;
+}
+
+function insertTilesRandom() {
+    // Clear existing grid
+    grid.innerHTML = '';
+
+    for (let i = 0; i < fullTileList.length; i++) {
+        if (fixedTileNumList.includes(i)) {
+            grid.appendChild(fixedTileList[fixedTileNumList.indexOf(i)]);
+        } else {
+            let randomIndex = Math.floor(Math.random() * randomTileList.length);
+            grid.appendChild(randomTileList[randomIndex]);
+            randomTileList.splice(randomIndex, 1);
         }
     }
 }
 
-// Generate initial grid
-generateGrid();
+function insertTilesOrdered() {
+    // Clear existing grid
+    grid.innerHTML = '';
+
+    for (let i = 0; i < fullTileList.length; i++) {
+        grid.appendChild(fullTileList[i]);
+    }
+}
+
+function transitionTiles(reorderTiles) {
+    var gridChildren = grid.children;
+    for(let i = 0; i < fullTileList.length; i++) {
+        if(!gridChildren[i].classList.contains('fixed')) {
+            gridChildren[i].classList.remove('draggable');
+
+            gridChildren[i].classList.add("scaling");
+
+            gridChildren[i].style.transform = "scale(0)";
+
+            setTimeout(() => {
+                gridChildren[i].style.transform = "scale(1)";
+            }, 800);
+
+            setTimeout(() => {
+                gridChildren[i].classList.remove("scaling");
+            }, 1700);
+
+            if(!puzzleSolved) {
+                setTimeout(() => {
+                    gridChildren[i].classList.add('draggable');
+                }, 1700);
+            }
+        }
+    }
+
+    setTimeout(() => {
+        reorderTiles();
+    }, 700);
+}
