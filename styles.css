@@ -128,15 +128,21 @@ body {
 #header-stats div {
     position: absolute;
     text-align: center;
-    left: 60%;
     font-size: 20px;
     transform: translateY(50%);
 }
 
+@media (min-width: 600px) {
+    #header-stats div {
+        left: 60%;
+    }
+}
+
 @media (max-width: 599px) {
     #header-stats div {
-        left: 55%;
+        right: 0%;
         bottom: 50%;
+        width: 8ch;
     }
 }
 @media (min-width: 600px) {

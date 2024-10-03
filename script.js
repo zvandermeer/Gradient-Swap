@@ -53,6 +53,8 @@ const heightLabel = document.getElementById('heightLabel');
 const finalWidthLabel = document.getElementById('finalWidthLabel');
 const finalHeightLabel = document.getElementById('finalHeightLabel');
 
+const headerStatsContainer = document.querySelector('#header-stats div');
+
 function addWidth() {
     let width = parseInt(widthLabel.innerHTML);
     if(width < 20) {
@@ -419,6 +421,10 @@ async function stopDrag(touch) {
             swaps++;
 
             swapCounter.innerHTML = "Swaps: " + swaps;
+
+            if(window.innerWidth < 600) {
+                headerStatsContainer.style.width = swapCounter.innerHTML.length + 'ch'
+            }
 
             newTile = element;
 
