@@ -384,6 +384,9 @@ function startDrag(e, touch) {
                 }
             }, 1000);
         }
+
+        cursorX = e.pageX
+        cursorY = e.pageY
         
         draggedTile = e.target;
         draggedTile.classList.add('dragging');
@@ -637,7 +640,7 @@ function chooseFixedTiles(rows, columns) {
             },
             2: () => {
                 for (let i = 1; i < columns - 1; i++) {
-                    fixedTileNumList.push(rows * (columns - 1) + i); // Bottom
+                    fixedTileNumList.push(columns * (rows - 1) + i); // Bottom
                 }
             },
             3: () => {
