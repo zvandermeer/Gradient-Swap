@@ -129,15 +129,7 @@ createButton.addEventListener('click', async () => {
 
 const viewPuzzleButton = document.getElementById("viewButton");
 viewPuzzleButton.addEventListener('click', () => {
-    if(puzzleSolved) {
-        finalOverlay.classList.add('hidden');
-    } else {
-        if(devMode) {
-            puzzleSolved = true;
-            timerRunning = false;
-        }
-        transitionTiles(insertTilesOrdered);
-    }
+    finalOverlay.classList.add('hidden');
 });
 
 const shareButton = document.getElementById("shareButton");
@@ -229,12 +221,16 @@ quickRegenerateButton.addEventListener('click', async () => {
 
 const menuButton = document.getElementById('header-menu');
 menuButton.addEventListener('click', () => {
-    gamePaused = true;
+    if(puzzleSolved) {
+        finalOverlay.classList.remove('hidden');
+    } else {
+        gamePaused = true;
 
-    pauseTime.innerHTML = timer.innerHTML;
-    pauseSwaps.innerHTML = swaps;
+        pauseTime.innerHTML = timer.innerHTML;
+        pauseSwaps.innerHTML = swaps;
 
-    pauseScreen.classList.remove('hidden');
+        pauseScreen.classList.remove('hidden');
+    }
 });
 
 const pauseResumeButton = document.getElementById('pauseResumeButton');
