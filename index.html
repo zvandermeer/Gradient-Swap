@@ -3,27 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Gradient Swap!</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
-    <meta name="theme-color" content="#fff9e7">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/ios-pwa-splash@1.0.0/cdn.min.js"></script>
+    <script>iosPWASplash('icons/icon-512x512.png', '#FFFFFF');</script>
+
 </head>
 <body>
-    <div id="controls">
-        <label for="rows">Rows:</label>
-        <input type="number" id="rows" value="6" min="3" max="20">
-        <label for="columns">Columns:</label>
-        <input type="number" id="columns" value="6" min="3" max="20">
-        <button id="generate">Generate Grid</button>
-        <button id="solution">Show Solution?</button>
-        <span id="swaps">Swaps: 0</span>
-        <span id="timer">0:00</span>
-        <input type="checkbox" id="cheater">
-        <label for="vehicle1"> Enable cheater mode</label><br>
+    <div id="welcome-screen">
+        <div>
+            <h1>Colour Swap!</h1>
+            <h2>Select your grid size</h2>
+        </div>
+        <div class="dimension-button-container">
+            <div>Width</div>
+            <div class="dimension-button">
+                <button id="widthPlusButton" class="button"><i class="bi bi-plus"></i></button>
+                <p id="widthLabel">6</p>
+                <button id="widthMinusButton" class="button"><i class="bi bi-dash"></i></button>
+            </div>
+            <div>Height</div>
+            <div class="dimension-button">
+                <button id="heightPlusButton" class="button"><i class="bi bi-plus"></i></button>
+                <p id="heightLabel">6</p>
+                <button id="heightMinusButton" class="button"><i class="bi bi-dash"></i></button>
+            </div>
+        </div>
+        <button id="gridCreateButton", class="button create-button">Generate grid!</button>
     </div>
-    
-    <div id="grid"></div>
+
+    <div id="game-screen" style="display: none;">
+        <div id="controls">
+            <div id="header-buttons">
+                <button id="header-menu" class="button"><i class="bi bi-list"></i></i></button>
+                <button id="header-restart" class="button"><i class="bi bi-arrow-clockwise"></i></button>
+            </div>
+            <div id="header-stats">
+                <div>
+                    <span id="swaps">Swaps: 0</span>
+                    <span id="timer">0:00</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="grid"></div>
+    </div>
+
+    <div id="final-overlay" class="overlay hidden">
+        <div class="box">
+            <h2>You win!</h2>
+            <div class="stats">
+                <div class="time">
+                    <div>Time:</div>
+                    <div id="overlayTime">00:00</div>
+                </div>
+                <div class="swaps">
+                    <div>Swaps:</div>
+                    <div id="overlaySwaps">0</div>
+                </div>
+            </div>
+            <div class="final-dimension-adjust">
+                <div style="padding-bottom: 5px;">
+                    <p>Width</p>
+                    <button id="finalWidthPlusButton" class="button"><i class="bi bi-plus"></i></button>
+                    <p id="finalWidthLabel">6</p>
+                    <button id="finalWidthMinusButton" class="button"><i class="bi bi-dash"></i></button>
+                </div>
+                <div style="padding-bottom: 5px;">
+                    <p>Height</p>
+                    <button id="finalHeightPlusButton" class="button"><i class="bi bi-plus"></i></button>
+                    <p id="finalHeightLabel">6</p>
+                    <button id="finalHeightMinusButton" class="button"><i class="bi bi-dash"></i></button>
+                </div>
+            </div>
+            <div class="button-div">
+                <button id="regenerateButton" class="button"><i class="bi bi-arrow-clockwise"></i> Play again!</button>
+            </div>
+            <div class="button-div">
+                <button id="shareButton" class="button"><i class="bi bi-share"></i></button>
+                <button id="viewButton" class="button"><i class="bi bi-eye"></i></button>
+                <button id="homeButton" class="button"><i class="bi bi-house-door"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pause-menu" class="overlay hidden">
+        <div class="box">
+            <h2>Game Paused</h2>
+            <div class="stats">
+                <div class="time">
+                    <div>Time:</div>
+                    <div id="pauseTime">00:00</div>
+                </div>
+                <div class="swaps">
+                    <div>Swaps:</div>
+                    <div id="pauseSwaps">0</div>
+                </div>
+            </div>
+            <div class="button-div">
+                <button id="pauseResumeButton" class="button"><i class="bi bi-play-fill"></i> Back to Game</button>
+            </div>
+            <div class="button-div">
+                <button id="pauseSolutionButton" class="button"><i class="bi bi-eye"></i> Show solution</button>
+            </div>
+            <div class="button-div">
+                <button id="pauseHomeButton" class="button"><i class="bi bi-house-door"></i> Go Home</button>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
     <script>
