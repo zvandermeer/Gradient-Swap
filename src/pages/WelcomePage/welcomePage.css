@@ -1,42 +1,42 @@
 #welcome-screen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
 }
 .dimension-button-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    flex-basis: 50%;
-    justify-content: center;
-    padding-bottom: 30px;
-    padding-top: 10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  flex-basis: 50%;
+  justify-content: center;
+  padding-bottom: 30px;
+  padding-top: 10px;
 }
 .dimension-button {
-    display: flex;
-    flex-direction: row;
-    padding: 20px;
-    width: 100%;
-    justify-content: center;
+  display: flex;
+  flex-direction: row;
+  padding: 20px;
+  width: 100%;
+  justify-content: center;
 }
 .dimension-button button {
-    height: 45px;
-    width: 45px;
+  height: 45px;
+  width: 45px;
 }
 .dimension-button button:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 .dimension-button p {
-    padding: 0 20px 0 20px;
+  padding: 0 20px 0 20px;
 }
 .inliners {
-    display: inline-block;
+  display: inline-block;
 }
 .create-button {
-    font-size: 20px;
-    height: 60px;
-    width: 160px;
-    border-radius: 17px;
+  font-size: 20px;
+  height: 60px;
+  width: 160px;
+  border-radius: 17px;
 }

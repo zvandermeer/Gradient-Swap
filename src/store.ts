@@ -3,10 +3,10 @@ import gridReducer from "./pages/GamePage/components/Grid/gridSlice";
 import gameReducer from "./pages/GamePage/gameSlice";
 
 export const store = configureStore({
-    reducer: {
-        grid: gridReducer,
-        game: gameReducer,
-    },
+  reducer: {
+    grid: gridReducer,
+    game: gameReducer,
+  },
 });
 
 // Infer the `RootState`,  `AppDispatch`, and `AppStore` types from the store itself
