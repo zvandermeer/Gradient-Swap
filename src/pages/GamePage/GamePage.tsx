@@ -9,6 +9,7 @@ import PauseOverlay from "./components/PauseOverlay/PauseOverlay";
 import { GameState, setGameState } from "./gameSlice";
 import { setOriginalGridLayout, setTileTransition } from "./components/Grid/gridSlice";
 import { AppDispatch } from "../../store";
+import { db } from "../../db";
 
 async function solveGame(
   solveDelay: number,
@@ -17,6 +18,8 @@ async function solveGame(
   solvedGrid: Tile[],
   setGridLoaded: booleanSetterType
 ) {
+  db.games.update(1, {completed: 1})
+
   await sleep(solveDelay);
 
   dispatch(setTileTransition("shrink"));

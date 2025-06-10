@@ -1,15 +1,16 @@
 const colorSimilarityThreshold = 25;
 
+import { db } from "../../db";
 import { booleanSetterType, sleep } from "../../helpers";
 import { AppDispatch } from "../../store";
-import type { Tile } from "./components/Grid/Grid";
+import type { GridLayout, Tile } from "./components/Grid/Grid";
 import {
   setGridTransition,
   setOriginalGridLayout,
   setSolvedGridLayout,
   setTileTransition,
 } from "./components/Grid/gridSlice";
-import { GameState, resetSwaps, resetTimer, setGameState } from "./gameSlice";
+import { GameState, resetSwaps, resetTimer, setGameState, setSwaps, setTimer } from "./gameSlice";
 
 export async function newLevel(
   dispatch: AppDispatch,
@@ -60,19 +61,49 @@ export async function newLevel(
 
   const randomTileList = randomizeTileList(solvedGrid.tiles);
 
-  dispatch(
-    setOriginalGridLayout({
-      rows: solvedGrid.rows,
-      columns: solvedGrid.columns,
-      tiles: randomTileList,
-    })
-  );
+  const originalGrid = {
+    rows: solvedGrid.rows,
+    columns: solvedGrid.columns,
+    tiles: randomTileList,
+  };
+
+  dispatch(setOriginalGridLayout(originalGrid));
+
+  db.games.put({
+    id: 1,
+    completed: 0,
+    swaps: 0,
+    time: 0,
+    rows: rows,
+    columns: columns,
+    currentLayout: originalGrid,
+    solvedGrid: solvedGrid.tiles,
+  });
 
   dispatch(setTileTransition("full"));
 
   await sleep(700);
 
   dispatch(setTileTransition(""));
+  dispatch(setGameState(GameState.Waiting));
+}
+
+export async function loadSavedLevel(
+  dispatch: AppDispatch,
+  swaps: number,
+  timer: number,
+  currentLayout: GridLayout,
+  solvedGrid: Tile[]
+) {
+  dispatch(setGameState(GameState.Generating));
+
+  dispatch(setSwaps(swaps));
+  dispatch(setTimer(timer));
+  dispatch(setOriginalGridLayout(currentLayout));
+  dispatch(setSolvedGridLayout(solvedGrid));
+
+  await sleep(500);
+
   dispatch(setGameState(GameState.Waiting));
 }
 

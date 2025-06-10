@@ -8,6 +8,7 @@ import JSConfetti from "js-confetti";
 import { GameState, incrementSwaps, setGameState } from "../../gameSlice";
 import { AppDispatch } from "../../../../store";
 import { setIncorrectTiles } from "./gridSlice";
+import { db } from "../../../../db";
 
 export type GridLayout = {
   rows: number;
@@ -46,6 +47,25 @@ function evaluateGrid(
   }
 
   return true;
+}
+
+function saveGrid(
+  rows: number,
+  columns: number,
+  solvedGridLayout: Tile[],
+  internalGridLayout: String[],
+) {
+  var currentLayout = {columns: columns, rows: rows, tiles: []} as GridLayout;
+
+  for (var i = 0; i < solvedGridLayout.length; i++) {
+    if (solvedGridLayout[i].fixed) {
+      currentLayout.tiles.push(solvedGridLayout[i]);
+    } else {
+      currentLayout.tiles.push({fixed: false, tileColor: internalGridLayout[i]} as Tile);
+    }
+  }
+
+  db.games.update(1, { currentLayout: currentLayout })
 }
 
 function Grid({ setOverlayVisible, gridLoaded }: Props) {
@@ -103,9 +123,13 @@ function Grid({ setOverlayVisible, gridLoaded }: Props) {
 
           jsConfetti.addConfetti();
 
+          db.games.update(1, {completed: 1})
+
           await sleep(1800);
 
           setOverlayVisible(true);
+        } else {
+          saveGrid(originalLayout.rows, originalLayout.columns, solvedGrid, internalLayout);
         }
       });
     }

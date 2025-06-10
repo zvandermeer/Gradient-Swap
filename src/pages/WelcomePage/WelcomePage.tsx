@@ -3,17 +3,12 @@ import { useAppDispatch, useAppSelector } from "../../hooks";
 import { setGridColumns, setGridRows } from "../GamePage/components/Grid/gridSlice";
 import "./welcomePage.css";
 import { useEffect, useState } from "react";
-import { newLevel } from "../GamePage/generation";
+import { loadSavedLevel, newLevel } from "../GamePage/generation";
 import { sleep } from "../../helpers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { GameState, setGameState } from "../GamePage/gameSlice";
-import { AppDispatch } from "../../store";
-
-function updateDimensions(dispatch: AppDispatch, columns: number, rows: number) {
-  dispatch(setGridColumns(columns));
-  dispatch(setGridRows(rows));
-}
+import { db, Games } from "../../db";
 
 function WelcomePage() {
   let navigate = useNavigate();
@@ -25,7 +20,17 @@ function WelcomePage() {
 
   const [pageTransition, setPageTransition] = useState("");
 
+  const [lastGame, setLastGame] = useState<Games | undefined>(undefined);
+
   useEffect(() => {
+    const run = async () => {
+      const myLastGame = await db.games.where("completed").equals(0).first();
+      console.log(JSON.stringify(myLastGame));
+
+      setLastGame(myLastGame);
+    }
+    run();
+    
     if (gameState !== GameState.Home) {
       dispatch(setGameState(GameState.Home));
       setPageTransition("fade-in");
@@ -74,6 +79,22 @@ function WelcomePage() {
       >
         Generate grid!
       </button>
+      {lastGame && (
+        <button
+          className="button create-button"
+          onClick={async () => {
+            setPageTransition("fade-out");
+
+            await sleep(500);
+
+            loadSavedLevel(dispatch, lastGame.swaps, lastGame.time, lastGame.currentLayout, lastGame.solvedGrid);
+
+            navigate("game");
+          }}
+        >
+          Load saved game
+        </button>
+      )}
     </div>
   );
 }

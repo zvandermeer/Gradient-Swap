@@ -17,7 +17,7 @@ export const statsSlice = createSlice({
     setTotalTime: (state, action: PayloadAction<number>) => {
       state.value.totalTime = action.payload;
     },
-    setSwaps: (state, action: PayloadAction<number>) => {
+    setTotalSwaps: (state, action: PayloadAction<number>) => {
       state.value.swaps = action.payload;
     },
     setFastest: (state, action: PayloadAction<number>) => {
@@ -26,6 +26,6 @@ export const statsSlice = createSlice({
   },
 });
 
-export const { setGames, setTotalTime, setSwaps, setFastest } = statsSlice.actions;
+export const { setGames, setTotalTime, setTotalSwaps, setFastest } = statsSlice.actions;
 
 export default statsSlice.reducer;

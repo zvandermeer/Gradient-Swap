@@ -2,18 +2,9 @@
 import Dexie, { type EntityTable } from "dexie";
 import { GridLayout, Tile } from "./pages/GamePage/components/Grid/Grid";
 import { AppDispatch } from "./store";
-import { setFastest, setGames, setSwaps, setTotalTime } from "./pages/WelcomePage/statsSlice";
+import { setFastest, setGames, setTotalSwaps, setTotalTime } from "./pages/WelcomePage/statsSlice";
 import { setGridColumns, setGridRows } from "./pages/GamePage/components/Grid/gridSlice";
 import { setStatsEnabled } from "./pages/GamePage/gameSlice";
-import {
-  setSavedColumns,
-  setSavedCurrentLayout,
-  setSavedGameActive,
-  setSavedRows,
-  setSavedSolvedGrid,
-  setSavedSwaps,
-  setSavedTimer,
-} from "./pages/GamePage/savedGameSlice";
 
 interface Games {
   id: number;
@@ -79,7 +70,7 @@ export async function loadDb(dispatch: AppDispatch) {
       dispatch(setTotalTime(userStats.totalTime));
     }
     if (userStats.swaps) {
-      dispatch(setSwaps(userStats.swaps));
+      dispatch(setTotalSwaps(userStats.swaps));
     }
     if (userStats.fastest) {
       dispatch(setFastest(userStats.fastest));
@@ -102,29 +93,5 @@ export async function loadDb(dispatch: AppDispatch) {
     }
   } else {
     await db.settings.add({ id: 1, statsVisible: 1, rows: 5, columns: 5 });
-  }
-
-  const lastGame = await db.games.where("completed").equals(0).first();
-  if (lastGame) {
-    dispatch(setSavedGameActive(true));
-
-    if (lastGame.swaps) {
-      dispatch(setSavedSwaps(lastGame.swaps));
-    }
-    if (lastGame.time) {
-      dispatch(setSavedTimer(lastGame.time));
-    }
-    if (lastGame.rows) {
-      dispatch(setSavedRows(lastGame.rows));
-    }
-    if (lastGame.columns) {
-      dispatch(setSavedColumns(lastGame.columns));
-    }
-    if (lastGame.currentLayout) {
-      dispatch(setSavedCurrentLayout(lastGame.currentLayout));
-    }
-    if (lastGame.solvedGrid) {
-      dispatch(setSavedSolvedGrid(lastGame.solvedGrid));
-    }
   }
 }
