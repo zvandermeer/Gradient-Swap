@@ -196,6 +196,13 @@ function Grid({ setOverlayVisible, gridLoaded }: Props) {
                     </div>
                   </div>
                 )}
+                {!gridLoaded && (
+                  <div key={`placeholder${index}`} className="tile" style={{
+                    backgroundColor: "#fff9e7",
+                    width: tileWidth,
+                    height: tileHeight,
+                  }}></div>
+                )}
               </>
             ) : (
               <div
