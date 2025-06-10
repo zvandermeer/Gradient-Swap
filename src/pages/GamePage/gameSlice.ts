@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "../../store";
 
 export enum GameState {
   Playing,
@@ -51,7 +50,5 @@ export const {
   resetSwaps,
   incrementSwaps,
 } = gameSlice.actions;
-
-export const selectGrid = (state: RootState) => state.grid.value;
 
 export default gameSlice.reducer;

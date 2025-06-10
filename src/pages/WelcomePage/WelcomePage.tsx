@@ -8,6 +8,12 @@ import { sleep } from "../../helpers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { GameState, setGameState } from "../GamePage/gameSlice";
+import { AppDispatch } from "../../store";
+
+function updateDimensions(dispatch: AppDispatch, columns: number, rows: number) {
+  dispatch(setGridColumns(columns));
+  dispatch(setGridRows(rows));
+}
 
 function WelcomePage() {
   let navigate = useNavigate();
