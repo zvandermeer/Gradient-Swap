@@ -1,57 +1,57 @@
 #grid {
-    display: grid;
-    margin-top: 15px;
+  display: grid;
+  margin-top: 15px;
 }
 
 .tile.full {
-    animation: tile-grow 0.6s ease;
-    scale: 1;
+  animation: tile-grow 0.6s ease;
+  scale: 1;
 }
 
 .tile.shrink {
-    animation: tile-shrink 0.6s ease;
-    scale: 0;
+  animation: tile-shrink 0.6s ease;
+  scale: 0;
 }
 
 @keyframes tile-grow {
-    0% {
-        scale: 0;
-    }
+  0% {
+    scale: 0;
+  }
 
-    100% {
-        scale: 1;
-    }
+  100% {
+    scale: 1;
+  }
 }
 
 @keyframes tile-shrink {
-    0% {
-        scale: 1;
-    }
+  0% {
+    scale: 1;
+  }
 
-    100% {
-        scale: 0;
-    }
+  100% {
+    scale: 0;
+  }
 }
 
 .dot {
-    background-color: black;
-    border-radius: 50%;
-    position: absolute;
+  background-color: black;
+  border-radius: 50%;
+  position: absolute;
 }
 
 .hint {
-    animation: hint 1s ease-in-out 3;
-    animation-fill-mode: forwards;
+  animation: hint 1s ease-in-out 3;
+  animation-fill-mode: forwards;
 }
 
 @keyframes hint {
-    0% {
-        filter: brightness(100%);
-    }
-    50% {
-        filter: brightness(135%);
-    }
-    100% {
-        filter: brightness(100%);
-    }
+  0% {
+    filter: brightness(100%);
+  }
+  50% {
+    filter: brightness(135%);
+  }
+  100% {
+    filter: brightness(100%);
+  }
 }

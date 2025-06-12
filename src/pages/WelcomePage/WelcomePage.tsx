@@ -1,90 +1,102 @@
 import { useNavigate } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import {
-    setGridColumns,
-    setGridRows,
-} from "../GamePage/components/Grid/gridSlice";
+import { setGridColumns, setGridRows } from "../GamePage/components/Grid/gridSlice";
 import "./welcomePage.css";
 import { useEffect, useState } from "react";
-import { newLevel } from "../GamePage/generation";
+import { loadSavedLevel, newLevel } from "../GamePage/generation";
 import { sleep } from "../../helpers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { GameState, setGameState } from "../GamePage/gameSlice";
+import { db, Games } from "../../db";
 
 function WelcomePage() {
-    let navigate = useNavigate();
-    const dispatch = useAppDispatch();
+  let navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-    const rows = useAppSelector((state) => state.grid.value.rows);
-    const columns = useAppSelector((state) => state.grid.value.columns);
-    const gameState = useAppSelector((state) => state.game.value.gameState);
+  const rows = useAppSelector((state) => state.grid.value.rows);
+  const columns = useAppSelector((state) => state.grid.value.columns);
+  const gameState = useAppSelector((state) => state.game.value.gameState);
 
-    const [pageTransition, setPageTransition] = useState("");
+  const [pageTransition, setPageTransition] = useState("");
 
-    useEffect(() => {
-        if (gameState !== GameState.Home) {
-            dispatch(setGameState(GameState.Home));
-            setPageTransition("fade-in");
-        }
-    }, []);
+  const [lastGame, setLastGame] = useState<Games | undefined>(undefined);
 
-    return (
-        <div id="welcome-screen" className={pageTransition}>
-            <div>
-                <h1>Colour Swap!</h1>
-                <h2>Select your grid size</h2>
-            </div>
-            <div className="dimension-button-container">
-                <div>Width</div>
-                <div className="dimension-button">
-                    <button
-                        className="button"
-                        onClick={() => dispatch(setGridColumns(columns + 1))}
-                    >
-                        <FontAwesomeIcon icon={faPlus} />
-                    </button>
-                    <p>{columns}</p>
-                    <button
-                        className="button"
-                        onClick={() => dispatch(setGridColumns(columns - 1))}
-                    >
-                        <FontAwesomeIcon icon={faMinus} />
-                    </button>
-                </div>
-                <div>Height</div>
-                <div className="dimension-button">
-                    <button
-                        className="button"
-                        onClick={() => dispatch(setGridRows(rows + 1))}
-                    >
-                        <FontAwesomeIcon icon={faPlus} />
-                    </button>
-                    <p>{rows}</p>
-                    <button
-                        className="button"
-                        onClick={() => dispatch(setGridRows(rows - 1))}
-                    >
-                        <FontAwesomeIcon icon={faMinus} />
-                    </button>
-                </div>
-            </div>
-            <button
-                className="button create-button"
-                onClick={async () => {
-                    setPageTransition("fade-out");
+  useEffect(() => {
+    const run = async () => {
+      const myLastGame = await db.games.where("completed").equals(0).first();
+      console.log(JSON.stringify(myLastGame));
 
-                    await sleep(500);
+      setLastGame(myLastGame);
+    }
+    run();
+    
+    if (gameState !== GameState.Home) {
+      dispatch(setGameState(GameState.Home));
+      setPageTransition("fade-in");
+    }
+  }, []);
 
-                    newLevel(dispatch, rows, columns, 500, false);
-
-                    navigate("game");
-                }}
-            >
-                Generate grid!
-            </button>
+  return (
+    <div id="welcome-screen" className={pageTransition}>
+      <div>
+        <h1>Colour Swap!</h1>
+        <h2>Select your grid size</h2>
+      </div>
+      <div className="dimension-button-container">
+        <div>Width</div>
+        <div className="dimension-button">
+          <button className="button" onClick={() => dispatch(setGridColumns(columns + 1))}>
+            <FontAwesomeIcon icon={faPlus} />
+          </button>
+          <p>{columns}</p>
+          <button className="button" onClick={() => dispatch(setGridColumns(columns - 1))}>
+            <FontAwesomeIcon icon={faMinus} />
+          </button>
         </div>
-    );
+        <div>Height</div>
+        <div className="dimension-button">
+          <button className="button" onClick={() => dispatch(setGridRows(rows + 1))}>
+            <FontAwesomeIcon icon={faPlus} />
+          </button>
+          <p>{rows}</p>
+          <button className="button" onClick={() => dispatch(setGridRows(rows - 1))}>
+            <FontAwesomeIcon icon={faMinus} />
+          </button>
+        </div>
+      </div>
+      <button
+        className="button create-button"
+        onClick={async () => {
+          setPageTransition("fade-out");
+
+          await sleep(500);
+
+          newLevel(dispatch, rows, columns, 500, false);
+
+          navigate("game");
+        }}
+      >
+        Generate grid!
+      </button>
+      {lastGame && (
+        <button
+          className="button create-button"
+          onClick={async () => {
+            setPageTransition("fade-out");
+
+            await sleep(500);
+
+            loadSavedLevel(dispatch, lastGame.swaps, lastGame.time, lastGame.currentLayout, lastGame.solvedGrid);
+
+            navigate("game");
+          }}
+        >
+          Load saved game
+        </button>
+      )}
+    </div>
+  );
 }
 
 export default WelcomePage;
