@@ -25,8 +25,6 @@ function WelcomePage() {
   useEffect(() => {
     const run = async () => {
       const myLastGame = await db.games.where("completed").equals(0).first();
-      console.log(JSON.stringify(myLastGame));
-
       setLastGame(myLastGame);
     }
     run();

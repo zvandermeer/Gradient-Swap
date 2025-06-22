@@ -53,19 +53,19 @@ function saveGrid(
   rows: number,
   columns: number,
   solvedGridLayout: Tile[],
-  internalGridLayout: String[],
+  internalGridLayout: String[]
 ) {
-  var currentLayout = {columns: columns, rows: rows, tiles: []} as GridLayout;
+  var currentLayout = { columns: columns, rows: rows, tiles: [] } as GridLayout;
 
   for (var i = 0; i < solvedGridLayout.length; i++) {
     if (solvedGridLayout[i].fixed) {
       currentLayout.tiles.push(solvedGridLayout[i]);
     } else {
-      currentLayout.tiles.push({fixed: false, tileColor: internalGridLayout[i]} as Tile);
+      currentLayout.tiles.push({ fixed: false, tileColor: internalGridLayout[i] } as Tile);
     }
   }
 
-  db.games.update(1, { currentLayout: currentLayout })
+  db.games.update(1, { currentLayout: currentLayout });
 }
 
 function Grid({ setOverlayVisible, gridLoaded }: Props) {
@@ -123,7 +123,7 @@ function Grid({ setOverlayVisible, gridLoaded }: Props) {
 
           jsConfetti.addConfetti();
 
-          db.games.update(1, {completed: 1})
+          db.games.update(1, { completed: 1 });
 
           await sleep(1800);
 
@@ -146,10 +146,12 @@ function Grid({ setOverlayVisible, gridLoaded }: Props) {
 
     // Attach the event listener to the window object
     window.addEventListener("resize", handleResize);
+    screen.orientation.addEventListener("change", handleResize);
 
     // Remove the event listener when the component unmounts
     return () => {
       window.removeEventListener("resize", handleResize);
+      screen.orientation.removeEventListener("change", handleResize);
     };
   }, []);
 
@@ -160,7 +162,6 @@ function Grid({ setOverlayVisible, gridLoaded }: Props) {
       ref={containerRef}
       className={gridTransition}
       style={{
-        display: "grid",
         gridTemplateRows: `repeat(${originalLayout.rows}, ${tileHeight}px)`,
         gridTemplateColumns: `repeat(${originalLayout.columns}, ${tileWidth}px)`,
       }}
@@ -177,8 +178,6 @@ function Grid({ setOverlayVisible, gridLoaded }: Props) {
                       className={"tile " + tileTransition + (tileHints[index] ? " hint" : "")}
                       style={{
                         backgroundColor: i.tileColor,
-                        width: tileWidth,
-                        height: tileHeight,
                       }}
                       data-swapy-item={i.tileColor}
                     >
@@ -188,8 +187,6 @@ function Grid({ setOverlayVisible, gridLoaded }: Props) {
                           data-swapy-no-drag
                           style={{
                             backgroundColor: i.tileColor,
-                            width: tileWidth,
-                            height: tileHeight,
                           }}
                         ></div>
                       )}
@@ -197,11 +194,7 @@ function Grid({ setOverlayVisible, gridLoaded }: Props) {
                   </div>
                 )}
                 {!gridLoaded && (
-                  <div key={`placeholder${index}`} className="tile" style={{
-                    backgroundColor: "#fff9e7",
-                    width: tileWidth,
-                    height: tileHeight,
-                  }}></div>
+                  <div key={`placeholder${index}`} className="tile placeholder"></div>
                 )}
               </>
             ) : (
@@ -209,8 +202,6 @@ function Grid({ setOverlayVisible, gridLoaded }: Props) {
                 key={`fixedTile${index}`}
                 style={{
                   backgroundColor: i.tileColor,
-                  width: tileWidth,
-                  height: tileHeight,
                 }}
               >
                 <div
