@@ -404,7 +404,18 @@ function chooseFixedTiles(rows: number, columns: number) {
         return false;
       }
     },
-    // Just corners [6]
+    // X [6]
+    (fixedTileNumList: Array<number>, rows: number, columns: number) => {
+      if (rows != columns) {
+        return false;
+      }
+      for (let i = 1; i < rows - 1; i++) {
+        fixedTileNumList.push((i*rows)+i);
+        fixedTileNumList.push(((i+1)*rows)-(i+1));
+      }
+      return true;
+    },
+    // Just corners [7]
     () => {
       return true;
     },
