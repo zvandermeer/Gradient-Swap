@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { setGridColumns, setGridRows } from "../GamePage/components/Grid/gridSlice";
 import "./welcomePage.css";
@@ -9,8 +9,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { GameState, setGameState } from "../GamePage/gameSlice";
 import { db, Games } from "../../db";
+import { PRNG } from "../../prng";
 
-function WelcomePage() {
+interface Props {
+  myRng: PRNG
+}
+
+function WelcomePage({ myRng }: Props) {
   let navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -22,12 +27,21 @@ function WelcomePage() {
 
   const [lastGame, setLastGame] = useState<Games | undefined>(undefined);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
   useEffect(() => {
     const run = async () => {
       const myLastGame = await db.games.where("completed").equals(0).first();
       setLastGame(myLastGame);
     }
     run();
+
+    const seed = searchParams.get('seed')
+    
+    if(seed) {
+      myRng.setSeed(Number(seed))
+      setSearchParams(new URLSearchParams());
+    }
     
     if (gameState !== GameState.Home) {
       dispatch(setGameState(GameState.Home));
@@ -70,7 +84,7 @@ function WelcomePage() {
 
           await sleep(500);
 
-          newLevel(dispatch, rows, columns, 500, false);
+          newLevel(dispatch, rows, columns, 500, false, myRng);
 
           navigate("game");
         }}

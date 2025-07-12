@@ -17,6 +17,7 @@ import { GameState, setGameState } from "../../gameSlice";
 import { faCircleCheck, faRectangleXmark } from "@fortawesome/free-regular-svg-icons";
 import { AppDispatch } from "../../../../store";
 import { GridLayout, Tile } from "../Grid/Grid";
+import { PRNG } from "../../../../prng";
 
 type solveGameFunc = (
   solveDelay: number,
@@ -31,6 +32,7 @@ interface Props {
   setPageTransition: (state: string) => void;
   setOverlayVisible: booleanSetterType;
   solveGame: solveGameFunc;
+  myRng: PRNG;
 }
 
 async function closeOverlay(
@@ -56,9 +58,10 @@ function createButton(
   columns: number,
   setGridLoaded: booleanSetterType,
   setOverlayHiding: booleanSetterType,
-  setOverlayVisible: booleanSetterType
+  setOverlayVisible: booleanSetterType,
+  myRng: PRNG
 ) {
-  newLevel(dispatch, rows, columns, 300, true, setGridLoaded);
+  newLevel(dispatch, rows, columns, 300, true, myRng, setGridLoaded);
 
   closeOverlay(setOverlayHiding, setOverlayVisible, dispatch, false);
 }
@@ -84,7 +87,7 @@ async function shareButton(rows: number, columns: number, timer: number, swaps: 
   await navigator.share(shareData);
 }
 
-function PauseOverlay({ setGridLoaded, setPageTransition, setOverlayVisible, solveGame }: Props) {
+function PauseOverlay({ setGridLoaded, setPageTransition, setOverlayVisible, solveGame, myRng }: Props) {
   let navigate = useNavigate();
 
   const dispatch = useAppDispatch();
@@ -200,7 +203,8 @@ function PauseOverlay({ setGridLoaded, setPageTransition, setOverlayVisible, sol
                   columns,
                   setGridLoaded,
                   setOverlayHiding,
-                  setOverlayVisible
+                  setOverlayVisible,
+                  myRng
                 )
               }
             >
@@ -284,7 +288,8 @@ function PauseOverlay({ setGridLoaded, setPageTransition, setOverlayVisible, sol
                   columns,
                   setGridLoaded,
                   setOverlayHiding,
-                  setOverlayVisible
+                  setOverlayVisible,
+                  myRng
                 )
               }
             >

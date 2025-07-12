@@ -2,6 +2,7 @@ const colorSimilarityThreshold = 25;
 
 import { db } from "../../db";
 import { booleanSetterType, sleep } from "../../helpers";
+import { PRNG } from "../../prng";
 import { AppDispatch } from "../../store";
 import type { GridLayout, Tile } from "./components/Grid/Grid";
 import {
@@ -18,6 +19,7 @@ export async function newLevel(
   columns: number,
   tileTransitionDelay: number,
   fadeGrid: boolean,
+  myRng: PRNG,
   setGridLoaded?: booleanSetterType
 ) {
   dispatch(setGameState(GameState.Generating));
@@ -32,7 +34,7 @@ export async function newLevel(
     setGridLoaded(false);
   }
 
-  const tileList = generateNewTileList(columns, rows);
+  const tileList = generateNewTileList(columns, rows, myRng);
 
   const solvedGrid = {
     rows: rows,
@@ -59,7 +61,7 @@ export async function newLevel(
 
   await sleep(800);
 
-  const randomTileList = randomizeTileList(solvedGrid.tiles);
+  const randomTileList = randomizeTileList(solvedGrid.tiles, myRng);
 
   const originalGrid = {
     rows: solvedGrid.rows,
@@ -107,7 +109,7 @@ export async function loadSavedLevel(
   dispatch(setGameState(GameState.Waiting));
 }
 
-function randomizeTileList(grid: Tile[]) {
+function randomizeTileList(grid: Tile[], myRng: PRNG) {
   var originalGrid = [...grid];
   const randomGrid = [] as Tile[];
 
@@ -117,7 +119,7 @@ function randomizeTileList(grid: Tile[]) {
     if (grid[i].fixed) {
       randomGrid[i] = grid[i];
     } else {
-      let randomIndex = Math.floor(Math.random() * originalGrid.length);
+      let randomIndex = Math.floor(myRng.generate() * originalGrid.length);
 
       randomGrid[i] = originalGrid[randomIndex];
       originalGrid.splice(randomIndex, 1);
@@ -127,12 +129,12 @@ function randomizeTileList(grid: Tile[]) {
   return randomGrid;
 }
 
-function generateNewTileList(gridWidth: number, gridHeight: number): Tile[] {
-  const cornerColors = generateCornerColors();
+function generateNewTileList(gridWidth: number, gridHeight: number, myRng: PRNG): Tile[] {
+  const cornerColors = generateCornerColors(myRng);
 
   let colorGrid = generateGradientGrid(cornerColors, gridWidth, gridHeight);
 
-  let fixedTileNumList = chooseFixedTiles(gridHeight, gridWidth);
+  let fixedTileNumList = chooseFixedTiles(gridHeight, gridWidth, myRng);
 
   let tileList: Tile[] = [];
 
@@ -146,7 +148,7 @@ function generateNewTileList(gridWidth: number, gridHeight: number): Tile[] {
   return tileList;
 }
 
-function generateCornerColors(): Array<string> {
+function generateCornerColors(myRng: PRNG): Array<string> {
   let suitableColors = false;
   let cornerColors: Array<string> = new Array<string>(4);
 
@@ -154,7 +156,7 @@ function generateCornerColors(): Array<string> {
     const colorDeltas = [];
 
     for (let i = 0; i < 4; i++) {
-      cornerColors[i] = getRandomColor();
+      cornerColors[i] = getRandomColor(myRng);
     }
 
     for (let i = 0; i < 4; i++) {
@@ -174,11 +176,11 @@ function generateCornerColors(): Array<string> {
 }
 
 // Generate a random hex code
-function getRandomColor(): string {
+function getRandomColor(myRng: PRNG): string {
   const letters = "0123456789ABCDEF";
   let color = "#";
   for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
+    color += letters[Math.floor(myRng.generate() * 16)];
   }
   return color;
 }
@@ -223,7 +225,7 @@ function generateGradientGrid(
   return grid;
 }
 
-function chooseFixedTiles(rows: number, columns: number) {
+function chooseFixedTiles(rows: number, columns: number, myRng: PRNG) {
   var fixedTileNumList: Array<number> = [0, columns - 1, columns * (rows - 1), rows * columns - 1];
 
   function genFullVertical(fixedTileNumList: Array<number>, rows: number, columns: number) {
@@ -322,18 +324,13 @@ function chooseFixedTiles(rows: number, columns: number) {
 
   var fixedTilePatterns = [
     // Random full sides [0]
-    (fixedTileNumList: Array<number>, rows: number, columns: number, sidePattern?: number) => {
+    (fixedTileNumList: Array<number>, rows: number, columns: number) => {
       let totalPatterns = 15;
       if (rows < 4 && columns < 4) {
-        if (sidePattern == 14) {
-          return false;
-        }
         totalPatterns = 14;
       }
 
-      if (!sidePattern) {
-        sidePattern = Math.floor(Math.random() * totalPatterns);
-      }
+      let sidePattern = Math.floor(myRng.generate() * totalPatterns);
 
       const sidePatterns = [
         [0],
@@ -424,7 +421,7 @@ function chooseFixedTiles(rows: number, columns: number) {
   let pattern = null;
 
   do {
-    pattern = Math.floor(Math.random() * fixedTilePatterns.length);
+    pattern = Math.floor(myRng.generate() * fixedTilePatterns.length);
   } while (!fixedTilePatterns[pattern](fixedTileNumList, rows, columns));
 
   return fixedTileNumList.sort(function (a, b) {

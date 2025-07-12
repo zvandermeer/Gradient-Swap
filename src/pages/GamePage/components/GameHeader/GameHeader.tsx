@@ -7,14 +7,16 @@ import { GameState, incrementTimer, setGameState } from "../../gameSlice";
 import { useEffect } from "react";
 import { booleanSetterType, sleep } from "../../../../helpers";
 import { setVisibleHints } from "../Grid/gridSlice";
+import { PRNG } from "../../../../prng";
 
 interface Props {
   setGridLoaded: booleanSetterType;
   setOverlayVisible: booleanSetterType;
   overlayVisible: boolean;
+  myRng: PRNG;
 }
 
-function GameHeader({ setGridLoaded, setOverlayVisible, overlayVisible }: Props) {
+function GameHeader({ setGridLoaded, setOverlayVisible, overlayVisible, myRng }: Props) {
   const dispatch = useAppDispatch();
 
   const rows = useAppSelector((state) => state.grid.value.rows);
@@ -57,7 +59,7 @@ function GameHeader({ setGridLoaded, setOverlayVisible, overlayVisible }: Props)
         <button
           onClick={async () => {
             if (!overlayVisible && gameState !== GameState.Generating) {
-              newLevel(dispatch, rows, columns, 300, true, setGridLoaded);
+              newLevel(dispatch, rows, columns, 300, true, myRng, setGridLoaded);
             }
           }}
           className="button"

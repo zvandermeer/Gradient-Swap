@@ -10,6 +10,7 @@ import { GameState, setGameState } from "./gameSlice";
 import { setOriginalGridLayout, setTileTransition } from "./components/Grid/gridSlice";
 import { AppDispatch } from "../../store";
 import { db } from "../../db";
+import { PRNG } from "../../prng";
 
 async function solveGame(
   solveDelay: number,
@@ -48,7 +49,11 @@ async function solveGame(
   dispatch(setGameState(GameState.Lost));
 }
 
-function GamePage() {
+interface Props {
+  myRng: PRNG;
+}
+
+function GamePage({ myRng }: Props) {
   let navigate = useNavigate();
 
   const originalGrid = useAppSelector((state) => state.grid.value.originalLayout);
@@ -80,6 +85,7 @@ function GamePage() {
               setOverlayVisible={setOverlayVisible}
               overlayVisible={overlayVisible}
               setGridLoaded={setGridLoaded}
+              myRng={myRng}
             />
             <Grid setOverlayVisible={setOverlayVisible} gridLoaded={gridLoaded} />
           </div>
@@ -89,6 +95,7 @@ function GamePage() {
               setOverlayVisible={setOverlayVisible}
               solveGame={solveGame}
               setGridLoaded={setGridLoaded}
+              myRng={myRng}
             />
           )}
         </>

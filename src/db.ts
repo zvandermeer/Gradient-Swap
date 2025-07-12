@@ -58,8 +58,6 @@ export type { Games, Stats, Settings };
 export { db };
 
 export async function loadDb(dispatch: AppDispatch) {
-  console.log("Loading DB...")
-
   const userStats = await db.stats.get(1);
 
   if (userStats) {
