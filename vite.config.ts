@@ -27,6 +27,7 @@ export default defineConfig(({ mode }) => {
           description:
             "A beautiful, infinitely replayable, randomly generated gradient tile swapping game, built in ReactJS.",
           start_url: "/",
+          scope: "/",
           background_color: "#fff9e7",
           theme_color: "#fff9e7",
           display: "standalone",

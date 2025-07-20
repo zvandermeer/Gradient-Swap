@@ -20,6 +20,7 @@ export async function newLevel(
   tileTransitionDelay: number,
   fadeGrid: boolean,
   myRng: PRNG,
+  newSeed: boolean,
   setGridLoaded?: booleanSetterType
 ) {
   dispatch(setGameState(GameState.Generating));
@@ -32,6 +33,10 @@ export async function newLevel(
     await sleep(500);
 
     setGridLoaded(false);
+  }
+
+  if(newSeed) {
+    myRng.newSeed();
   }
 
   const tileList = generateNewTileList(columns, rows, myRng);
@@ -53,6 +58,8 @@ export async function newLevel(
     setGridLoaded(true);
 
     await sleep(500);
+
+    dispatch(setGridTransition(""));
   }
 
   await sleep(tileTransitionDelay);

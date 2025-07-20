@@ -1,8 +1,8 @@
 import Grid, { GridLayout, Tile } from "./components/Grid/Grid";
 import GameHeader from "./components/GameHeader/GameHeader";
 import "./gamePage.css";
-import { useEffect, useState } from "react";
-import { booleanSetterType, sleep } from "../../helpers";
+import { useEffect, useRef, useState } from "react";
+import { booleanSetterType, dataURItoBlob, sleep } from "../../helpers";
 import { useAppSelector } from "../../hooks";
 import { useNavigate } from "react-router";
 import PauseOverlay from "./components/PauseOverlay/PauseOverlay";
@@ -11,6 +11,8 @@ import { setOriginalGridLayout, setTileTransition } from "./components/Grid/grid
 import { AppDispatch } from "../../store";
 import { db } from "../../db";
 import { PRNG } from "../../prng";
+
+import html2canvas from "html2canvas";
 
 async function solveGame(
   solveDelay: number,
@@ -62,6 +64,30 @@ function GamePage({ myRng }: Props) {
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [gridLoaded, setGridLoaded] = useState(true);
 
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  function gridScreenshot(): Promise<File> {
+    return new Promise(function(resolve, reject) {
+      if (gridRef.current) {
+        var canvasPromise = html2canvas(gridRef.current, {
+          useCORS: true,
+          logging: false,
+        });
+        canvasPromise.then((canvas)=> {
+          var dataURL = canvas.toDataURL("image/png");
+
+          var blob = dataURItoBlob(dataURL);
+
+          resolve(new File([blob], 'share.png', {
+            type: 'image/png',
+          }))
+        });
+      } else {
+        reject("Canvas reference not initialized properly");
+      }
+    })
+  }
+
   useEffect(() => {
     const run = async () => {
       if (Object.keys(originalGrid).length === 0) {
@@ -87,7 +113,7 @@ function GamePage({ myRng }: Props) {
               setGridLoaded={setGridLoaded}
               myRng={myRng}
             />
-            <Grid setOverlayVisible={setOverlayVisible} gridLoaded={gridLoaded} />
+            <Grid setOverlayVisible={setOverlayVisible} gridLoaded={gridLoaded} gridRef={gridRef} />
           </div>
           {overlayVisible && (
             <PauseOverlay
@@ -96,6 +122,7 @@ function GamePage({ myRng }: Props) {
               solveGame={solveGame}
               setGridLoaded={setGridLoaded}
               myRng={myRng}
+              gridScreenshot={gridScreenshot}
             />
           )}
         </>

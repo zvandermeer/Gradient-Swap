@@ -7,6 +7,7 @@ export const store = configureStore({
     grid: gridReducer,
     game: gameReducer,
   },
+  devTools: import.meta.env.PROD,
 });
 
 // Infer the `RootState`,  `AppDispatch`, and `AppStore` types from the store itself

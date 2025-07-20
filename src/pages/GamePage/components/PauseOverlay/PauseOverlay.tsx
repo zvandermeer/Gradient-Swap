@@ -33,6 +33,7 @@ interface Props {
   setOverlayVisible: booleanSetterType;
   solveGame: solveGameFunc;
   myRng: PRNG;
+  gridScreenshot: () => Promise<File>;
 }
 
 async function closeOverlay(
@@ -61,7 +62,7 @@ function createButton(
   setOverlayVisible: booleanSetterType,
   myRng: PRNG
 ) {
-  newLevel(dispatch, rows, columns, 300, true, myRng, setGridLoaded);
+  newLevel(dispatch, rows, columns, 300, true, myRng, true, setGridLoaded);
 
   closeOverlay(setOverlayHiding, setOverlayVisible, dispatch, false);
 }
@@ -79,15 +80,20 @@ function solveButton(
   closeOverlay(setOverlayHiding, setOverlayVisible, dispatch, false);
 }
 
-async function shareButton(rows: number, columns: number, timer: number, swaps: number) {
-  const shareData = {
-    text: `Gradient Game (${columns}x${rows})\nFinished in: ${Math.floor(timer / 60)}:${(timer % 60).toString().padStart(2, "0")}\nTotal swaps: ${swaps}\nPlay: https://gradient.starlightt.xyz`,
-  };
+async function shareButton(rows: number, columns: number, timer: number, swaps: number, myRng: PRNG, gridScreenshot: () => Promise<File>) {
+  const seed = myRng.seed;
+  
+  gridScreenshot().then(async (file) => {
+    const shareData = {
+      files: [file],
+      text: `I solved this ${columns}x${rows} Colour Swap puzzle in ${Math.floor(timer / 60)}:${(timer % 60).toString().padStart(2, "0")} with ${swaps} swaps! \nTry this level: https://gradient.starlightt.xyz/?seed=${seed}`,
+    };
 
-  await navigator.share(shareData);
+    await navigator.share(shareData);
+  })
 }
 
-function PauseOverlay({ setGridLoaded, setPageTransition, setOverlayVisible, solveGame, myRng }: Props) {
+function PauseOverlay({ setGridLoaded, setPageTransition, setOverlayVisible, solveGame, myRng, gridScreenshot }: Props) {
   let navigate = useNavigate();
 
   const dispatch = useAppDispatch();
@@ -235,12 +241,11 @@ function PauseOverlay({ setGridLoaded, setPageTransition, setOverlayVisible, sol
           )}
         {gameState === GameState.Won && overlayScale === 0 && (
           <div className="button-div">
-            <button className="button">
-              <FontAwesomeIcon
-                icon={faShareNodes}
-                onClick={() => shareButton(rows, columns, timer, swaps)}
-              />{" "}
-              Share!
+            <button 
+              className="button"
+              onClick={() => shareButton(rows, columns, timer, swaps, myRng, gridScreenshot)}
+            >
+              <FontAwesomeIcon icon={faShareNodes} /> Share!
             </button>
           </div>
         )}
@@ -270,12 +275,12 @@ function PauseOverlay({ setGridLoaded, setPageTransition, setOverlayVisible, sol
                 <FontAwesomeIcon icon={faCircleCheck} />
               </button>
             )}
-          {gameState === GameState.Won && overlayScale > 1 && (
-            <button className="button">
-              <FontAwesomeIcon
-                icon={faShareNodes}
-                onClick={() => shareButton(rows, columns, timer, swaps)}
-              />
+          {gameState === GameState.Won && overlayScale >= 1 && (
+            <button 
+              className="button"
+              onClick={() => shareButton(rows, columns, timer, swaps, myRng, gridScreenshot)}
+            >
+              <FontAwesomeIcon icon={faShareNodes} />
             </button>
           )}
           {overlayScale === 2 && (

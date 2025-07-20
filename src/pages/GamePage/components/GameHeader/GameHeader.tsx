@@ -59,7 +59,7 @@ function GameHeader({ setGridLoaded, setOverlayVisible, overlayVisible, myRng }:
         <button
           onClick={async () => {
             if (!overlayVisible && gameState !== GameState.Generating) {
-              newLevel(dispatch, rows, columns, 300, true, myRng, setGridLoaded);
+              newLevel(dispatch, rows, columns, 300, true, myRng, true, setGridLoaded);
             }
           }}
           className="button"

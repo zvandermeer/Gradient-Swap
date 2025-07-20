@@ -28,6 +28,7 @@ function WelcomePage({ myRng }: Props) {
   const [lastGame, setLastGame] = useState<Games | undefined>(undefined);
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const [newSeed, setNewSeed] = useState<boolean>(true);
 
   useEffect(() => {
     const run = async () => {
@@ -41,6 +42,7 @@ function WelcomePage({ myRng }: Props) {
     if(seed) {
       myRng.setSeed(Number(seed))
       setSearchParams(new URLSearchParams());
+      setNewSeed(false);
     }
     
     if (gameState !== GameState.Home) {
@@ -84,7 +86,8 @@ function WelcomePage({ myRng }: Props) {
 
           await sleep(500);
 
-          newLevel(dispatch, rows, columns, 500, false, myRng);
+          newLevel(dispatch, rows, columns, 500, false, myRng, newSeed);
+          setNewSeed(true);
 
           navigate("game");
         }}

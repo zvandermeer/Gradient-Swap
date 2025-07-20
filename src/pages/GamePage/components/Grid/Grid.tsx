@@ -26,6 +26,7 @@ const jsConfetti = new JSConfetti();
 interface Props {
   setOverlayVisible: (state: boolean) => void;
   gridLoaded: boolean;
+  gridRef: React.RefObject<HTMLDivElement | null>;
 }
 
 function evaluateGrid(
@@ -68,7 +69,7 @@ function saveGrid(
   db.games.update(1, { currentLayout: currentLayout });
 }
 
-function Grid({ setOverlayVisible, gridLoaded }: Props) {
+function Grid({ setOverlayVisible, gridLoaded, gridRef }: Props) {
   const dispatch = useAppDispatch();
 
   const gameState = useAppSelector((state) => state.game.value.gameState);
@@ -89,11 +90,9 @@ function Grid({ setOverlayVisible, gridLoaded }: Props) {
 
   const swapyRef = useRef<Swapy | null>(null);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
-    if (containerRef.current) {
-      swapyRef.current = createSwapy(containerRef.current, {
+    if (gridRef.current) {
+      swapyRef.current = createSwapy(gridRef.current, {
         swapMode: "drop",
         animationDuration: 180,
       });
@@ -159,7 +158,7 @@ function Grid({ setOverlayVisible, gridLoaded }: Props) {
     <div
       key="grid"
       id="grid"
-      ref={containerRef}
+      ref={gridRef}
       className={gridTransition}
       style={{
         gridTemplateRows: `repeat(${originalLayout.rows}, ${tileHeight}px)`,
