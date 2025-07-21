@@ -18,6 +18,7 @@ import { faCircleCheck, faRectangleXmark } from "@fortawesome/free-regular-svg-i
 import { AppDispatch } from "../../store";
 import { GridLayout, Tile } from "../Grid/Grid";
 import { PRNG } from "../../prng";
+import ScreenOverlay from "../ScreenOverlay/ScreenOverlay";
 
 type solveGameFunc = (
   solveDelay: number,
@@ -164,164 +165,162 @@ function PauseOverlay({
   }, []);
 
   return (
-    <div className={"overlay " + (overlayHiding ? "hide" : "")}>
-      <div className="box">
-        <h2>{overlayHeader}</h2>
-        {statsEnabled && (
-          <div className="stats">
-            <div className="time">
-              <div>Time:</div>
-              <div>
-                {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, "0")}
-              </div>
-            </div>
-            <div className="swaps">
-              <div>Swaps:</div>
-              <div>{swaps}</div>
+    <ScreenOverlay overlayVisible={!overlayHiding}>
+      <h2>{overlayHeader}</h2>
+      {statsEnabled && (
+        <div className="stats">
+          <div className="time">
+            <div>Time:</div>
+            <div>
+              {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, "0")}
             </div>
           </div>
-        )}
-        <div className="final-dimension-adjust">
-          <div>
-            <p>Width</p>
-            <button className="button" onClick={() => dispatch(setGridColumns(columns + 1))}>
-              <FontAwesomeIcon icon={faPlus} />
-            </button>
-            <p>{columns}</p>
-            <button className="button" onClick={() => dispatch(setGridColumns(columns - 1))}>
-              <FontAwesomeIcon icon={faMinus} />
-            </button>
-          </div>
-          <div>
-            <p>Height</p>
-            <button className="button" onClick={() => dispatch(setGridRows(rows + 1))}>
-              <FontAwesomeIcon icon={faPlus} />
-            </button>
-            <p>{rows}</p>
-            <button className="button" onClick={() => dispatch(setGridRows(rows - 1))}>
-              <FontAwesomeIcon icon={faMinus} />
-            </button>
+          <div className="swaps">
+            <div>Swaps:</div>
+            <div>{swaps}</div>
           </div>
         </div>
-        {overlayScale < 2 && (
-          <div className="button-div">
-            <button
-              className="button"
-              onClick={() =>
-                createButton(
-                  dispatch,
-                  rows,
-                  columns,
-                  setGridLoaded,
-                  setOverlayHiding,
-                  setOverlayVisible,
-                  myRng
-                )
-              }
-            >
-              <FontAwesomeIcon icon={faArrowRotateRight} size="xs" /> New Game!
-            </button>
-          </div>
-        )}
-        {(gameState === GameState.Paused || gameState === GameState.Waiting) &&
-          overlayScale === 0 && (
-            <div className="button-div">
-              <button
-                className="button"
-                onClick={() =>
-                  solveButton(
-                    dispatch,
-                    solveGame,
-                    originalGrid,
-                    solvedGrid,
-                    setGridLoaded,
-                    setOverlayHiding,
-                    setOverlayVisible
-                  )
-                }
-              >
-                <FontAwesomeIcon icon={faCircleCheck} /> Show solution
-              </button>
-            </div>
-          )}
-        {gameState === GameState.Won && overlayScale === 0 && (
-          <div className="button-div">
-            <button
-              className="button"
-              onClick={() => shareButton(rows, columns, timer, swaps, myRng, gridScreenshot)}
-            >
-              <FontAwesomeIcon icon={faShareNodes} /> Share!
-            </button>
-          </div>
-        )}
-        <div className="button-div">
-          <button
-            className="button"
-            onClick={() => closeOverlay(setOverlayHiding, setOverlayVisible, dispatch, true)}
-          >
-            <FontAwesomeIcon icon={faRectangleXmark} size="lg" />
+      )}
+      <div className="final-dimension-adjust">
+        <div>
+          <p>Width</p>
+          <button className="button" onClick={() => dispatch(setGridColumns(columns + 1))}>
+            <FontAwesomeIcon icon={faPlus} />
           </button>
-          {(gameState === GameState.Paused || gameState === GameState.Waiting) &&
-            overlayScale > 0 && (
-              <button
-                className="button"
-                onClick={() => {
-                  solveButton(
-                    dispatch,
-                    solveGame,
-                    originalGrid,
-                    solvedGrid,
-                    setGridLoaded,
-                    setOverlayHiding,
-                    setOverlayVisible
-                  );
-                }}
-              >
-                <FontAwesomeIcon icon={faCircleCheck} />
-              </button>
-            )}
-          {gameState === GameState.Won && overlayScale >= 1 && (
-            <button
-              className="button"
-              onClick={() => shareButton(rows, columns, timer, swaps, myRng, gridScreenshot)}
-            >
-              <FontAwesomeIcon icon={faShareNodes} />
-            </button>
-          )}
-          {overlayScale === 2 && (
-            <button
-              className="button"
-              onClick={() =>
-                createButton(
-                  dispatch,
-                  rows,
-                  columns,
-                  setGridLoaded,
-                  setOverlayHiding,
-                  setOverlayVisible,
-                  myRng
-                )
-              }
-            >
-              <FontAwesomeIcon icon={faArrowRotateRight} size="xs" />
-            </button>
-          )}
-          <button
-            className="button"
-            onClick={async () => {
-              closeOverlay(setOverlayHiding, setOverlayVisible, dispatch, false);
-              setPageTransition("fade-out");
-
-              await sleep(500);
-
-              navigate("/");
-            }}
-          >
-            <FontAwesomeIcon icon={faHouse} />
+          <p>{columns}</p>
+          <button className="button" onClick={() => dispatch(setGridColumns(columns - 1))}>
+            <FontAwesomeIcon icon={faMinus} />
+          </button>
+        </div>
+        <div>
+          <p>Height</p>
+          <button className="button" onClick={() => dispatch(setGridRows(rows + 1))}>
+            <FontAwesomeIcon icon={faPlus} />
+          </button>
+          <p>{rows}</p>
+          <button className="button" onClick={() => dispatch(setGridRows(rows - 1))}>
+            <FontAwesomeIcon icon={faMinus} />
           </button>
         </div>
       </div>
-    </div>
+      {overlayScale < 2 && (
+        <div className="button-div">
+          <button
+            className="button"
+            onClick={() =>
+              createButton(
+                dispatch,
+                rows,
+                columns,
+                setGridLoaded,
+                setOverlayHiding,
+                setOverlayVisible,
+                myRng
+              )
+            }
+          >
+            <FontAwesomeIcon icon={faArrowRotateRight} size="xs" /> New Game!
+          </button>
+        </div>
+      )}
+      {(gameState === GameState.Paused || gameState === GameState.Waiting) &&
+        overlayScale === 0 && (
+          <div className="button-div">
+            <button
+              className="button"
+              onClick={() =>
+                solveButton(
+                  dispatch,
+                  solveGame,
+                  originalGrid,
+                  solvedGrid,
+                  setGridLoaded,
+                  setOverlayHiding,
+                  setOverlayVisible
+                )
+              }
+            >
+              <FontAwesomeIcon icon={faCircleCheck} /> Show solution
+            </button>
+          </div>
+        )}
+      {gameState === GameState.Won && overlayScale === 0 && (
+        <div className="button-div">
+          <button
+            className="button"
+            onClick={() => shareButton(rows, columns, timer, swaps, myRng, gridScreenshot)}
+          >
+            <FontAwesomeIcon icon={faShareNodes} /> Share!
+          </button>
+        </div>
+      )}
+      <div className="button-div">
+        <button
+          className="button"
+          onClick={() => closeOverlay(setOverlayHiding, setOverlayVisible, dispatch, true)}
+        >
+          <FontAwesomeIcon icon={faRectangleXmark} size="lg" />
+        </button>
+        {(gameState === GameState.Paused || gameState === GameState.Waiting) &&
+          overlayScale > 0 && (
+            <button
+              className="button"
+              onClick={() => {
+                solveButton(
+                  dispatch,
+                  solveGame,
+                  originalGrid,
+                  solvedGrid,
+                  setGridLoaded,
+                  setOverlayHiding,
+                  setOverlayVisible
+                );
+              }}
+            >
+              <FontAwesomeIcon icon={faCircleCheck} />
+            </button>
+          )}
+        {gameState === GameState.Won && overlayScale >= 1 && (
+          <button
+            className="button"
+            onClick={() => shareButton(rows, columns, timer, swaps, myRng, gridScreenshot)}
+          >
+            <FontAwesomeIcon icon={faShareNodes} />
+          </button>
+        )}
+        {overlayScale === 2 && (
+          <button
+            className="button"
+            onClick={() =>
+              createButton(
+                dispatch,
+                rows,
+                columns,
+                setGridLoaded,
+                setOverlayHiding,
+                setOverlayVisible,
+                myRng
+              )
+            }
+          >
+            <FontAwesomeIcon icon={faArrowRotateRight} size="xs" />
+          </button>
+        )}
+        <button
+          className="button"
+          onClick={async () => {
+            closeOverlay(setOverlayHiding, setOverlayVisible, dispatch, false);
+            setPageTransition("fade-out");
+
+            await sleep(500);
+
+            navigate("/");
+          }}
+        >
+          <FontAwesomeIcon icon={faHouse} />
+        </button>
+      </div>
+    </ScreenOverlay>
   );
 }
 
