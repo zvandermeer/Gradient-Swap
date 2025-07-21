@@ -49,6 +49,7 @@ function WelcomePage({ myRng }: Props) {
       dispatch(setGameState(GameState.Home));
       setPageTransition("fade-in");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -135,6 +135,7 @@ function Grid({ setOverlayVisible, gridLoaded, gridRef }: Props) {
     return () => {
       swapyRef.current?.destroy();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState]);
 
   useEffect(() => {

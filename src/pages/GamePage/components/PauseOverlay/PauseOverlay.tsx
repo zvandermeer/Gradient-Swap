@@ -125,30 +125,21 @@ function PauseOverlay({
   const solvedGrid = useAppSelector((state) => state.grid.value.solvedGrid);
 
   const [overlayHiding, setOverlayHiding] = useState(false);
-  const [overlayHeader, setOverlayHeader] = useState("");
   const [overlayScale, setOverlayScale] = useState(0);
 
-  useEffect(() => {
+  const overlayHeader = (() => {
     switch (gameState) {
-      case GameState.Won: {
-        setOverlayHeader("You win!");
-        break;
-      }
-      case GameState.Lost: {
-        setOverlayHeader("Play again?");
-        break;
-      }
+      case GameState.Won:
+        return "You win!";
+      case GameState.Lost:
+        return "Play again?";
       case GameState.Waiting:
-      case GameState.Paused: {
-        setOverlayHeader("Game paused");
-        break;
-      }
-      default: {
-        setOverlayHeader("Unknown game state");
-        break;
-      }
+      case GameState.Paused:
+        return "Game paused";
+      default:
+        return "Unknown game state";
     }
-  });
+  })();
 
   useEffect(() => {
     function handleResize() {

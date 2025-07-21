@@ -102,6 +102,7 @@ function GamePage({ myRng }: Props) {
       }
     };
     run();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
