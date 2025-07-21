@@ -12,7 +12,7 @@ function App() {
 
   useEffect(() => {
     loadDb(dispatch);
-  }, []);
+  }, [dispatch]);
 
   return (
     <BrowserRouter>

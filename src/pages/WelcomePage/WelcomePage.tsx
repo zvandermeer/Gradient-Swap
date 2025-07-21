@@ -12,11 +12,11 @@ import { db, Games } from "../../db";
 import { PRNG } from "../../prng";
 
 interface Props {
-  myRng: PRNG
+  myRng: PRNG;
 }
 
 function WelcomePage({ myRng }: Props) {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const rows = useAppSelector((state) => state.grid.value.rows);
@@ -34,7 +34,7 @@ function WelcomePage({ myRng }: Props) {
     const run = async () => {
       const myLastGame = await db.games.where("completed").equals(0).first();
       setLastGame(myLastGame);
-    }
+    };
     run();
 
     const seed = searchParams.get('seed')
@@ -102,7 +102,13 @@ function WelcomePage({ myRng }: Props) {
 
             await sleep(500);
 
-            loadSavedLevel(dispatch, lastGame.swaps, lastGame.time, lastGame.currentLayout, lastGame.solvedGrid);
+            loadSavedLevel(
+              dispatch,
+              lastGame.swaps,
+              lastGame.time,
+              lastGame.currentLayout,
+              lastGame.solvedGrid
+            );
 
             navigate("game");
           }}

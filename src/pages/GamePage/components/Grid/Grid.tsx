@@ -32,11 +32,11 @@ interface Props {
 function evaluateGrid(
   dispatch: AppDispatch,
   solvedGridLayout: Tile[],
-  internalGridLayout: String[]
+  internalGridLayout: string[]
 ): boolean {
-  var incorrectTiles = [];
+  const incorrectTiles = [];
 
-  for (var i = 0; i < solvedGridLayout.length; i++) {
+  for (let i = 0; i < solvedGridLayout.length; i++) {
     if (!solvedGridLayout[i].fixed && solvedGridLayout[i].tileColor !== internalGridLayout[i]) {
       incorrectTiles.push(i);
     }
@@ -54,11 +54,11 @@ function saveGrid(
   rows: number,
   columns: number,
   solvedGridLayout: Tile[],
-  internalGridLayout: String[]
+  internalGridLayout: string[]
 ) {
-  var currentLayout = { columns: columns, rows: rows, tiles: [] } as GridLayout;
+  const currentLayout = { columns: columns, rows: rows, tiles: [] } as GridLayout;
 
-  for (var i = 0; i < solvedGridLayout.length; i++) {
+  for (let i = 0; i < solvedGridLayout.length; i++) {
     if (solvedGridLayout[i].fixed) {
       currentLayout.tiles.push(solvedGridLayout[i]);
     } else {

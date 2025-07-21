@@ -23,13 +23,13 @@ export const gridSlice = createSlice({
     setGridRows: (state, action: PayloadAction<number>) => {
       if (action.payload >= 3) {
         state.value.rows = action.payload;
-        db.settings.update(1, {rows: action.payload})
+        db.settings.update(1, { rows: action.payload });
       }
     },
     setGridColumns: (state, action: PayloadAction<number>) => {
       if (action.payload >= 3) {
         state.value.columns = action.payload;
-        db.settings.update(1, {columns: action.payload})
+        db.settings.update(1, { columns: action.payload });
       }
     },
     setTileTransition: (state, action: PayloadAction<string>) => {

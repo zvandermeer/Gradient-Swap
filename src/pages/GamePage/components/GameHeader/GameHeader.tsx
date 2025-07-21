@@ -38,7 +38,7 @@ function GameHeader({ setGridLoaded, setOverlayVisible, overlayVisible, myRng }:
     return () => {
       clearInterval(x);
     };
-  }, [gameState]);
+  }, [gameState, dispatch]);
 
   return (
     <div id="controls">
@@ -69,7 +69,7 @@ function GameHeader({ setGridLoaded, setOverlayVisible, overlayVisible, myRng }:
         <button
           className="button"
           onClick={async () => {
-            let incorrectTile = incorrectTiles[Math.floor(Math.random() * incorrectTiles.length)];
+            const incorrectTile = incorrectTiles[Math.floor(Math.random() * incorrectTiles.length)];
 
             let newHints: boolean[] = Object.assign([], visibleHints);
             newHints[incorrectTile] = true;

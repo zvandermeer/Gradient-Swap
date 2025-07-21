@@ -46,7 +46,7 @@ export const {
   setSavedSwaps,
   setSavedTimer,
   setSavedCurrentLayout,
-  setSavedSolvedGrid
+  setSavedSolvedGrid,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

@@ -7,10 +7,10 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   return {
     server: {
-      allowedHosts: env.ALLOWED_HOSTS_VITE_SERVER.split(' ')
+      allowedHosts: env.ALLOWED_HOSTS_VITE_SERVER.split(" "),
     },
     preview: {
-      allowedHosts: env.ALLOWED_HOSTS_VITE_PREVIEW.split(' ')
+      allowedHosts: env.ALLOWED_HOSTS_VITE_PREVIEW.split(" "),
     },
     plugins: [
       react(),

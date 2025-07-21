@@ -21,7 +21,7 @@ async function solveGame(
   solvedGrid: Tile[],
   setGridLoaded: booleanSetterType
 ) {
-  db.games.update(1, {completed: 1})
+  db.games.update(1, { completed: 1 });
 
   await sleep(solveDelay);
 
@@ -56,7 +56,7 @@ interface Props {
 }
 
 function GamePage({ myRng }: Props) {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
 
   const originalGrid = useAppSelector((state) => state.grid.value.originalLayout);
 
@@ -67,25 +67,27 @@ function GamePage({ myRng }: Props) {
   const gridRef = useRef<HTMLDivElement>(null);
 
   function gridScreenshot(): Promise<File> {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       if (gridRef.current) {
-        var canvasPromise = html2canvas(gridRef.current, {
+        const canvasPromise = html2canvas(gridRef.current, {
           useCORS: true,
           logging: false,
         });
-        canvasPromise.then((canvas)=> {
-          var dataURL = canvas.toDataURL("image/png");
+        canvasPromise.then((canvas) => {
+          const dataURL = canvas.toDataURL("image/png");
 
-          var blob = dataURItoBlob(dataURL);
+          const blob = dataURItoBlob(dataURL);
 
-          resolve(new File([blob], 'share.png', {
-            type: 'image/png',
-          }))
+          resolve(
+            new File([blob], "share.png", {
+              type: "image/png",
+            })
+          );
         });
       } else {
         reject("Canvas reference not initialized properly");
       }
-    })
+    });
   }
 
   useEffect(() => {

@@ -80,21 +80,35 @@ function solveButton(
   closeOverlay(setOverlayHiding, setOverlayVisible, dispatch, false);
 }
 
-async function shareButton(rows: number, columns: number, timer: number, swaps: number, myRng: PRNG, gridScreenshot: () => Promise<File>) {
+async function shareButton(
+  rows: number,
+  columns: number,
+  timer: number,
+  swaps: number,
+  myRng: PRNG,
+  gridScreenshot: () => Promise<File>
+) {
   const seed = myRng.seed;
-  
+
   gridScreenshot().then(async (file) => {
     const shareData = {
       files: [file],
-      text: `I solved this ${columns}x${rows} Colour Swap puzzle in ${Math.floor(timer / 60)}:${(timer % 60).toString().padStart(2, "0")} with ${swaps} swaps! \nTry this level: https://gradient.starlightt.xyz/?seed=${seed}`,
+      text: `I solved this ${columns}x${rows} Colour Swap puzzle in ${Math.floor(timer / 60)}:${(timer % 60).toString().padStart(2, "0")} with ${swaps} swaps!\nTry this level: https://gradient.starlightt.xyz/?seed=${seed}&height=${rows}&width=${columns}`,
     };
 
     await navigator.share(shareData);
-  })
+  });
 }
 
-function PauseOverlay({ setGridLoaded, setPageTransition, setOverlayVisible, solveGame, myRng, gridScreenshot }: Props) {
-  let navigate = useNavigate();
+function PauseOverlay({
+  setGridLoaded,
+  setPageTransition,
+  setOverlayVisible,
+  solveGame,
+  myRng,
+  gridScreenshot,
+}: Props) {
+  const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
 
@@ -241,7 +255,7 @@ function PauseOverlay({ setGridLoaded, setPageTransition, setOverlayVisible, sol
           )}
         {gameState === GameState.Won && overlayScale === 0 && (
           <div className="button-div">
-            <button 
+            <button
               className="button"
               onClick={() => shareButton(rows, columns, timer, swaps, myRng, gridScreenshot)}
             >
@@ -276,7 +290,7 @@ function PauseOverlay({ setGridLoaded, setPageTransition, setOverlayVisible, sol
               </button>
             )}
           {gameState === GameState.Won && overlayScale >= 1 && (
-            <button 
+            <button
               className="button"
               onClick={() => shareButton(rows, columns, timer, swaps, myRng, gridScreenshot)}
             >

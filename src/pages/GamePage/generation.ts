@@ -35,7 +35,7 @@ export async function newLevel(
     setGridLoaded(false);
   }
 
-  if(newSeed) {
+  if (newSeed) {
     myRng.newSeed();
   }
 
@@ -117,7 +117,7 @@ export async function loadSavedLevel(
 }
 
 function randomizeTileList(grid: Tile[], myRng: PRNG) {
-  var originalGrid = [...grid];
+  let originalGrid = [...grid];
   const randomGrid = [] as Tile[];
 
   originalGrid = originalGrid.filter((item) => !item.fixed);
@@ -126,7 +126,7 @@ function randomizeTileList(grid: Tile[], myRng: PRNG) {
     if (grid[i].fixed) {
       randomGrid[i] = grid[i];
     } else {
-      let randomIndex = Math.floor(myRng.generate() * originalGrid.length);
+      const randomIndex = Math.floor(myRng.generate() * originalGrid.length);
 
       randomGrid[i] = originalGrid[randomIndex];
       originalGrid.splice(randomIndex, 1);
@@ -139,11 +139,11 @@ function randomizeTileList(grid: Tile[], myRng: PRNG) {
 function generateNewTileList(gridWidth: number, gridHeight: number, myRng: PRNG): Tile[] {
   const cornerColors = generateCornerColors(myRng);
 
-  let colorGrid = generateGradientGrid(cornerColors, gridWidth, gridHeight);
+  const colorGrid = generateGradientGrid(cornerColors, gridWidth, gridHeight);
 
-  let fixedTileNumList = chooseFixedTiles(gridHeight, gridWidth, myRng);
+  const fixedTileNumList = chooseFixedTiles(gridHeight, gridWidth, myRng);
 
-  let tileList: Tile[] = [];
+  const tileList: Tile[] = [];
 
   for (let i = 0; i < gridWidth * gridHeight; i++) {
     tileList.push({
@@ -157,7 +157,7 @@ function generateNewTileList(gridWidth: number, gridHeight: number, myRng: PRNG)
 
 function generateCornerColors(myRng: PRNG): Array<string> {
   let suitableColors = false;
-  let cornerColors: Array<string> = new Array<string>(4);
+  const cornerColors: Array<string> = new Array<string>(4);
 
   while (!suitableColors) {
     const colorDeltas = [];
@@ -167,9 +167,9 @@ function generateCornerColors(myRng: PRNG): Array<string> {
     }
 
     for (let i = 0; i < 4; i++) {
-      let rgb1 = hexToRgb(cornerColors[i]);
+      const rgb1 = hexToRgb(cornerColors[i]);
       for (let j = 1 + i; j < 4; j++) {
-        let rgb2 = hexToRgb(cornerColors[j]);
+        const rgb2 = hexToRgb(cornerColors[j]);
         colorDeltas.push(deltaE([rgb1.r, rgb1.g, rgb1.b], [rgb2.r, rgb2.g, rgb2.b]));
       }
     }
@@ -233,10 +233,15 @@ function generateGradientGrid(
 }
 
 function chooseFixedTiles(rows: number, columns: number, myRng: PRNG) {
-  var fixedTileNumList: Array<number> = [0, columns - 1, columns * (rows - 1), rows * columns - 1];
+  const fixedTileNumList: Array<number> = [
+    0,
+    columns - 1,
+    columns * (rows - 1),
+    rows * columns - 1,
+  ];
 
   function genFullVertical(fixedTileNumList: Array<number>, rows: number, columns: number) {
-    let column = columns / 2 - 1;
+    const column = columns / 2 - 1;
     if (columns & 1) {
       for (let i = 0; i < rows; i++) {
         fixedTileNumList.push(columns * i + Math.ceil(column));
@@ -251,7 +256,7 @@ function chooseFixedTiles(rows: number, columns: number, myRng: PRNG) {
   }
 
   function genFullHorizontal(fixedTileNumList: Array<number>, rows: number, columns: number) {
-    let row = rows / 2 - 1;
+    const row = rows / 2 - 1;
     if (rows & 1) {
       for (let i = 0; i < columns; i++) {
         fixedTileNumList.push(columns * Math.ceil(row) + i);
@@ -302,10 +307,10 @@ function chooseFixedTiles(rows: number, columns: number, myRng: PRNG) {
   }
 
   function getCenterTiles(rows: number, columns: number): Array<number> {
-    var centerTiles: Array<number> = [];
+    const centerTiles: Array<number> = [];
 
-    let row = rows / 2;
-    let column = columns / 2;
+    const row = rows / 2;
+    const column = columns / 2;
     if ((columns * rows) & 1) {
       centerTiles.push(columns * Math.ceil(row) - Math.ceil(column));
     } else if (!(columns & 1) && !(rows & 1)) {
@@ -329,7 +334,7 @@ function chooseFixedTiles(rows: number, columns: number, myRng: PRNG) {
     return centerTiles;
   }
 
-  var fixedTilePatterns = [
+  const fixedTilePatterns = [
     // Random full sides [0]
     (fixedTileNumList: Array<number>, rows: number, columns: number) => {
       let totalPatterns = 15;
@@ -337,7 +342,7 @@ function chooseFixedTiles(rows: number, columns: number, myRng: PRNG) {
         totalPatterns = 14;
       }
 
-      let sidePattern = Math.floor(myRng.generate() * totalPatterns);
+      const sidePattern = Math.floor(myRng.generate() * totalPatterns);
 
       const sidePatterns = [
         [0],
@@ -376,7 +381,7 @@ function chooseFixedTiles(rows: number, columns: number, myRng: PRNG) {
     },
     // Center [2]
     (fixedTileNumList: Array<number>, rows: number, columns: number) => {
-      let centerTiles = getCenterTiles(rows, columns);
+      const centerTiles = getCenterTiles(rows, columns);
       for (let i = 0; i < centerTiles.length; i++) {
         fixedTileNumList.push(centerTiles[i]);
       }
@@ -397,7 +402,7 @@ function chooseFixedTiles(rows: number, columns: number, myRng: PRNG) {
       if (rows > 6 && columns > 6) {
         genFullVertical(fixedTileNumList, rows, columns);
 
-        let centerTiles = getCenterTiles(rows, columns);
+        const centerTiles = getCenterTiles(rows, columns);
         for (let i = 0; i < centerTiles.length; i++) {
           fixedTileNumList.splice(fixedTileNumList.indexOf(centerTiles[i]), 1);
         }
@@ -414,8 +419,8 @@ function chooseFixedTiles(rows: number, columns: number, myRng: PRNG) {
         return false;
       }
       for (let i = 1; i < rows - 1; i++) {
-        fixedTileNumList.push((i*rows)+i);
-        fixedTileNumList.push(((i+1)*rows)-(i+1));
+        fixedTileNumList.push(i * rows + i);
+        fixedTileNumList.push((i + 1) * rows - (i + 1));
       }
       return true;
     },
@@ -437,7 +442,7 @@ function chooseFixedTiles(rows: number, columns: number, myRng: PRNG) {
 }
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } {
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? {
         r: parseInt(result[1], 16),
@@ -452,22 +457,22 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 }
 
 function deltaE(rgbA: Array<number>, rgbB: Array<number>): number {
-  let labA = rgb2lab(rgbA);
-  let labB = rgb2lab(rgbB);
-  let deltaL = labA[0] - labB[0];
-  let deltaA = labA[1] - labB[1];
-  let deltaB = labA[2] - labB[2];
-  let c1 = Math.sqrt(labA[1] * labA[1] + labA[2] * labA[2]);
-  let c2 = Math.sqrt(labB[1] * labB[1] + labB[2] * labB[2]);
-  let deltaC = c1 - c2;
+  const labA = rgb2lab(rgbA);
+  const labB = rgb2lab(rgbB);
+  const deltaL = labA[0] - labB[0];
+  const deltaA = labA[1] - labB[1];
+  const deltaB = labA[2] - labB[2];
+  const c1 = Math.sqrt(labA[1] * labA[1] + labA[2] * labA[2]);
+  const c2 = Math.sqrt(labB[1] * labB[1] + labB[2] * labB[2]);
+  const deltaC = c1 - c2;
   let deltaH = deltaA * deltaA + deltaB * deltaB - deltaC * deltaC;
   deltaH = deltaH < 0 ? 0 : Math.sqrt(deltaH);
-  let sc = 1.0 + 0.045 * c1;
-  let sh = 1.0 + 0.015 * c1;
-  let deltaLKlsl = deltaL / 1.0;
-  let deltaCkcsc = deltaC / sc;
-  let deltaHkhsh = deltaH / sh;
-  let i = deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh;
+  const sc = 1.0 + 0.045 * c1;
+  const sh = 1.0 + 0.015 * c1;
+  const deltaLKlsl = deltaL / 1.0;
+  const deltaCkcsc = deltaC / sc;
+  const deltaHkhsh = deltaH / sh;
+  const i = deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh;
   return i < 0 ? 0 : Math.sqrt(i);
 }
 

@@ -36,7 +36,7 @@ export const gameSlice = createSlice({
     },
     incrementTimer: (state) => {
       state.value.timer += 1;
-      db.games.update(1, {time: state.value.timer});
+      db.games.update(1, { time: state.value.timer });
     },
     setSwaps: (state, action: PayloadAction<number>) => {
       state.value.swaps = action.payload;
@@ -46,7 +46,7 @@ export const gameSlice = createSlice({
     },
     incrementSwaps: (state) => {
       state.value.swaps += 1;
-      db.games.update(1, {swaps: state.value.swaps});
+      db.games.update(1, { swaps: state.value.swaps });
     },
   },
 });
