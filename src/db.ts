@@ -1,9 +1,9 @@
 // db.ts
 import Dexie, { type EntityTable } from "dexie";
-import { GridLayout, Tile } from "./pages/GamePage/components/Grid/Grid";
+import { GridLayout, Tile } from "./components/Grid/Grid";
 import { AppDispatch } from "./store";
 import { setFastest, setGames, setTotalSwaps, setTotalTime } from "./pages/WelcomePage/statsSlice";
-import { setGridColumns, setGridRows } from "./pages/GamePage/components/Grid/gridSlice";
+import { setGridColumns, setGridRows } from "./components/Grid/gridSlice";
 import { setStatsEnabled } from "./pages/GamePage/gameSlice";
 
 interface Games {

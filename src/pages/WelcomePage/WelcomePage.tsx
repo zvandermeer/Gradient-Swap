@@ -1,6 +1,6 @@
 import { useNavigate, useSearchParams } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { setGridColumns, setGridRows } from "../GamePage/components/Grid/gridSlice";
+import { setGridColumns, setGridRows } from "../../components/Grid/gridSlice";
 import "./welcomePage.css";
 import { useEffect, useState } from "react";
 import { loadSavedLevel, newLevel } from "../GamePage/generation";
@@ -37,14 +37,14 @@ function WelcomePage({ myRng }: Props) {
     };
     run();
 
-    const seed = searchParams.get('seed')
-    
-    if(seed) {
-      myRng.setSeed(Number(seed))
+    const seed = searchParams.get("seed");
+
+    if (seed) {
+      myRng.setSeed(Number(seed));
       setSearchParams(new URLSearchParams());
       setNewSeed(false);
     }
-    
+
     if (gameState !== GameState.Home) {
       dispatch(setGameState(GameState.Home));
       setPageTransition("fade-in");

@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import gridReducer from "./pages/GamePage/components/Grid/gridSlice";
+import gridReducer from "./components/Grid/gridSlice";
 import gameReducer from "./pages/GamePage/gameSlice";
 
 export const store = configureStore({

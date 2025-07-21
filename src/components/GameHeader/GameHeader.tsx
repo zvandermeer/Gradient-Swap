@@ -1,13 +1,13 @@
-import { useAppDispatch, useAppSelector } from "../../../../hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 import "./gameHeader.css";
-import { newLevel } from "../../generation";
+import { newLevel } from "../../pages/GamePage/generation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRotateRight, faBars, faLightbulb } from "@fortawesome/free-solid-svg-icons";
-import { GameState, incrementTimer, setGameState } from "../../gameSlice";
+import { GameState, incrementTimer, setGameState } from "../../pages/GamePage/gameSlice";
 import { useEffect } from "react";
-import { booleanSetterType, sleep } from "../../../../helpers";
+import { booleanSetterType, sleep } from "../../helpers";
 import { setVisibleHints } from "../Grid/gridSlice";
-import { PRNG } from "../../../../prng";
+import { PRNG } from "../../prng";
 
 interface Props {
   setGridLoaded: booleanSetterType;

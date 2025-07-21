@@ -4,13 +4,13 @@ import { db } from "../../db";
 import { booleanSetterType, sleep } from "../../helpers";
 import { PRNG } from "../../prng";
 import { AppDispatch } from "../../store";
-import type { GridLayout, Tile } from "./components/Grid/Grid";
+import type { GridLayout, Tile } from "../../components/Grid/Grid";
 import {
   setGridTransition,
   setOriginalGridLayout,
   setSolvedGridLayout,
   setTileTransition,
-} from "./components/Grid/gridSlice";
+} from "../../components/Grid/gridSlice";
 import { GameState, resetSwaps, resetTimer, setGameState, setSwaps, setTimer } from "./gameSlice";
 
 export async function newLevel(

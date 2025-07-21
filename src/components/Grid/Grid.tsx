@@ -1,14 +1,14 @@
-import { useAppDispatch, useAppSelector } from "../../../../hooks";
-import { clamp, sleep } from "../../../../helpers";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { clamp, sleep } from "../../helpers";
 import { useEffect, useRef, useState } from "react";
 import { Swapy } from "swapy";
 import { createSwapy } from "swapy";
 import "./grid.css";
 import JSConfetti from "js-confetti";
-import { GameState, incrementSwaps, setGameState } from "../../gameSlice";
-import { AppDispatch } from "../../../../store";
+import { GameState, incrementSwaps, setGameState } from "../../pages/GamePage/gameSlice";
+import { AppDispatch } from "../../store";
 import { setIncorrectTiles } from "./gridSlice";
-import { db } from "../../../../db";
+import { db } from "../../db";
 
 export type GridLayout = {
   rows: number;

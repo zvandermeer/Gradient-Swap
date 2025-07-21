@@ -1,13 +1,13 @@
-import Grid, { GridLayout, Tile } from "./components/Grid/Grid";
-import GameHeader from "./components/GameHeader/GameHeader";
+import Grid, { GridLayout, Tile } from "../../components/Grid/Grid";
+import GameHeader from "../../components/GameHeader/GameHeader";
 import "./gamePage.css";
 import { useEffect, useRef, useState } from "react";
 import { booleanSetterType, dataURItoBlob, sleep } from "../../helpers";
 import { useAppSelector } from "../../hooks";
 import { useNavigate } from "react-router";
-import PauseOverlay from "./components/PauseOverlay/PauseOverlay";
+import PauseOverlay from "../../components/PauseOverlay/PauseOverlay";
 import { GameState, setGameState } from "./gameSlice";
-import { setOriginalGridLayout, setTileTransition } from "./components/Grid/gridSlice";
+import { setOriginalGridLayout, setTileTransition } from "../../components/Grid/gridSlice";
 import { AppDispatch } from "../../store";
 import { db } from "../../db";
 import { PRNG } from "../../prng";

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
-import { booleanSetterType, sleep } from "../../../../helpers";
-import { useAppDispatch, useAppSelector } from "../../../../hooks";
-import { newLevel } from "../../generation";
+import { booleanSetterType, sleep } from "../../helpers";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { newLevel } from "../../pages/GamePage/generation";
 import { setGridColumns, setGridRows } from "../Grid/gridSlice";
 import "./PauseOverlay.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,11 +13,11 @@ import {
   faHouse,
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import { GameState, setGameState } from "../../gameSlice";
+import { GameState, setGameState } from "../../pages/GamePage/gameSlice";
 import { faCircleCheck, faRectangleXmark } from "@fortawesome/free-regular-svg-icons";
-import { AppDispatch } from "../../../../store";
+import { AppDispatch } from "../../store";
 import { GridLayout, Tile } from "../Grid/Grid";
-import { PRNG } from "../../../../prng";
+import { PRNG } from "../../prng";
 
 type solveGameFunc = (
   solveDelay: number,

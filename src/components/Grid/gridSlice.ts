@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { GridLayout, Tile } from "./Grid";
-import { db } from "../../../../db";
+import { db } from "../../db";
 
 export const gridSlice = createSlice({
   name: "grid",
